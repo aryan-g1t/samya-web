@@ -30,3 +30,4 @@ Enforce strict visual parity with `refer/samya_desktop_full.png` (1440px) and `r
 ## 4. Animation & Interaction Standard
 - 60fps/120fps transform- and opacity-based animations only. Never animate width, height, margin, or top/left.
 - Honor `@media (prefers-reduced-motion: reduce)`.
+

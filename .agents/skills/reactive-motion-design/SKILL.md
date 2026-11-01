@@ -29,3 +29,4 @@ This skill defines the motion engineering principles for luxury editorial landin
   - Backdrop fade-in (`rgba(27, 5, 22, 0.6)` with backdrop-filter blur 4px).
   - Stage transitions (Stage 1 -> Stage 2 -> Stage 3):
     Horizontal sliding transition (`translateX(-20px) -> translateX(0)`) with opacity crossfade, avoiding abrupt jumps.
+

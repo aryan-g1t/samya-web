@@ -61,3 +61,4 @@ This document establishes the architectural constraints, design system tokens, q
 1. **Spec First:** Consult `samya_implementation_plan.md` before altering code.
 2. **Micro-Commits:** Every phase (Scaffolding → Desktop Layout → Mobile Layout → Motion → Modal → Testing) must conclude with an atomic Git commit (`feat:`, `fix:`, `refactor:`, `test:`).
 3. **Visual Parity Audit:** Run visual comparisons against `refer/samya_desktop_full.png` and `refer/samya_mobile_full.png` before declaring tasks complete.
+

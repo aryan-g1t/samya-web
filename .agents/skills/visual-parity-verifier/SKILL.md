@@ -25,3 +25,4 @@ Use this procedure when verifying the visual fidelity of Sāmya: against referen
   - Turquoise `#00AEBD`
 - [ ] Responsive navigation collapse at 960px and 540px.
 - [ ] Zero horizontal overflow on mobile viewports.
+
