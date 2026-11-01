@@ -48,7 +48,10 @@ server.listen(PORT, async () => {
     console.log('Capturing Desktop Screenshot (1440px)...');
     await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
     await page.goto(`http://localhost:${PORT}`, { waitUntil: 'networkidle0' });
-    await new Promise(r => setTimeout(r, 1000));
+    await page.evaluate(() => {
+      document.querySelectorAll('[data-animate]').forEach(el => el.classList.add('is-revealed'));
+    });
+    await new Promise(r => setTimeout(r, 600));
     const desktopHeights = await page.evaluate(() => ({
       total: document.body.scrollHeight,
       header: document.querySelector('.site-header')?.offsetHeight,
@@ -69,7 +72,10 @@ server.listen(PORT, async () => {
     console.log('Capturing Mobile Screenshot (390px)...');
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
     await page.goto(`http://localhost:${PORT}`, { waitUntil: 'networkidle0' });
-    await new Promise(r => setTimeout(r, 1000));
+    await page.evaluate(() => {
+      document.querySelectorAll('[data-animate]').forEach(el => el.classList.add('is-revealed'));
+    });
+    await new Promise(r => setTimeout(r, 600));
     const mobileHeights = await page.evaluate(() => ({
       total: document.body.scrollHeight,
       header: document.querySelector('.site-header')?.offsetHeight,
