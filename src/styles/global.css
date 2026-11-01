@@ -90,6 +90,24 @@ textarea:focus-visible {
   margin-inline: auto;
 }
 
+@media (max-width: 1180px) {
+  .container {
+    width: min(100% - 76px, 1360px);
+  }
+}
+
+@media (max-width: 800px) {
+  .container {
+    width: min(100% - 44px, 1360px);
+  }
+}
+
+@media (max-width: 540px) {
+  .container {
+    width: min(100% - 36px, 1360px);
+  }
+}
+
 /* Buttons and Magnetic Micro-interactions */
 .btn {
   display: inline-flex;

@@ -25,6 +25,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Test Screenshots
+screenshot_*.png
+test_*.png
+
 # Editor and OS
 .vscode/*
 !.vscode/extensions.json
