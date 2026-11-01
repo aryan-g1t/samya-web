@@ -1,0 +1,125 @@
+---
+---
+
+<section class="invitation" id="join" aria-labelledby="join-heading">
+  <div class="container invitation-grid">
+    <div>
+      <p class="eyebrow" data-animate="fade-up">03 / An invitation</p>
+      <h2 id="join-heading" data-animate="fade-up" data-delay="100">
+        Help shape <em>our first</em> shade range.
+      </h2>
+    </div>
+    <div class="invitation-right">
+      <p data-animate="fade-up" data-delay="100">
+        We're inviting people across India to tell us what has worked, what hasn't, and what they've been looking for in complexion products.
+      </p>
+      <p class="small" data-animate="fade-up" data-delay="200">
+        Start with a short survey. Your perspective can help inform Sāmya:'s founding research.
+      </p>
+      <div data-animate="fade-up" data-delay="300">
+        <button class="btn" type="button" data-open-modal aria-haspopup="dialog">
+          Join our founding research <span class="arrow" aria-hidden="true">↗</span>
+        </button>
+      </div>
+      <p class="disclaimer" data-animate="fade-up" data-delay="400">
+        Selected participants may be invited to receive a complimentary shade-testing kit. Our shade library and kits are in development; participation does not guarantee a kit.
+      </p>
+    </div>
+  </div>
+</section>
+<div class="invitation-ribbon" aria-hidden="true"></div>
+
+<style>
+  .invitation {
+    padding: 110px 0 101px;
+    background: var(--warm-white);
+    position: relative;
+  }
+
+  .invitation-grid {
+    display: grid;
+    grid-template-columns: 1.06fr .94fr;
+    gap: 90px;
+    align-items: center;
+  }
+
+  .invitation h2 {
+    font-family: var(--serif);
+    font-size: clamp(58px, 5.9vw, 90px);
+    font-weight: 500;
+    letter-spacing: -.052em;
+    line-height: .98;
+    margin: 18px 0 0;
+    max-width: 660px;
+  }
+
+  .invitation h2 em {
+    font-style: italic;
+    color: var(--wine);
+    font-weight: 400;
+  }
+
+  .invitation-right {
+    max-width: 440px;
+    justify-self: center;
+  }
+
+  .invitation-right > p {
+    font-size: 15px;
+    line-height: 1.95;
+    color: #5B4A55;
+    margin: 0 0 14px;
+  }
+
+  .invitation-right .small {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+
+  .invitation .btn {
+    min-width: 275px;
+  }
+
+  .disclaimer {
+    margin-top: 19px !important;
+    font-size: 11px !important;
+    line-height: 1.85 !important;
+    color: #8B7985 !important;
+    max-width: 400px;
+  }
+
+  .invitation-ribbon {
+    height: 5px;
+    background: linear-gradient(90deg, var(--plum), var(--purple), var(--wine), var(--fuchsia), var(--yellow), var(--turquoise), #E7DDD3);
+  }
+
+  @media (max-width: 800px) {
+    .invitation {
+      padding: 78px 0;
+    }
+    .invitation-grid {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .invitation-right {
+      justify-self: start;
+    }
+    .invitation h2 {
+      font-size: clamp(61px, 10vw, 84px);
+    }
+  }
+
+  @media (max-width: 540px) {
+    .invitation {
+      padding: 71px 0;
+    }
+    .invitation h2 {
+      font-size: clamp(57px, 12vw, 73px);
+    }
+    .invitation-right > p {
+      font-size: 14px;
+    }
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+---
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <a class="logo" href="#top" aria-label="Sāmya: return to top">
+      Sāmya<span class="logo-colon">:</span>
+    </a>
+    <span class="footer-copy">
+      Headquartered in New York.<br />Beginning in India.
+    </span>
+    <span class="footer-note">
+      Founding research · Concept preview · © 2026 Sāmya:
+    </span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 34px 0 38px;
+    background: var(--porcelain);
+  }
+
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: 34px;
+    letter-spacing: -.082em;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .logo:hover {
+    opacity: 0.9;
+  }
+
+  .logo-colon {
+    letter-spacing: -.04em;
+    color: var(--wine);
+  }
+
+  .footer-copy {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    font-weight: 700;
+    color: #887580;
+    line-height: 1.8;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: #82727C;
+  }
+
+  @media (max-width: 540px) {
+    .footer-row {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .footer-row .logo {
+      flex-basis: 100%;
+      font-size: 37px;
+    }
+    .footer-copy,
+    .footer-note {
+      font-size: 9px;
+    }
+  }
+</style>

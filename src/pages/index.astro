@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProblemSection from '../components/ProblemSection.astro';
+import MethodSection from '../components/MethodSection.astro';
+import InvitationSection from '../components/InvitationSection.astro';
+import Footer from '../components/Footer.astro';
+import ResearchModal from '../components/ResearchModal.astro';
+---
+
+<Layout>
+  <Header />
+  <main id="top">
+    <Hero />
+    <ProblemSection />
+    <MethodSection />
+    <InvitationSection />
+  </main>
+  <Footer />
+  <ResearchModal />
+</Layout>
+
+<style is:global>
+  /* Reactive Scroll Animations */
+  [data-animate="fade-up"] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+    will-change: opacity, transform;
+  }
+
+  [data-animate="fade-up"].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-animate="fade-up"] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  // 60/120fps Reactive Motion Engine
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 1. Scroll-triggered Kinetic Reveals
+    const animatedElements = document.querySelectorAll<HTMLElement>('[data-animate="fade-up"]');
+    
+    if (prefersReducedMotion) {
+      animatedElements.forEach(el => el.classList.add('is-revealed'));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const target = entry.target as HTMLElement;
+            const delay = parseInt(target.dataset.delay || '0', 10);
+            
+            setTimeout(() => {
+              target.classList.add('is-revealed');
+            }, delay);
+            
+            observer.unobserve(target);
+          }
+        });
+      }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      animatedElements.forEach(el => observer.observe(el));
+    }
+
+    // 2. 3D Magnetic Tilt & Specular Lighting on Hero Art (Desktop only)
+    const artWrap = document.getElementById('hero-art-wrap');
+    const artCard = document.getElementById('hero-art-card');
+    const artSheen = document.getElementById('hero-art-sheen');
+
+    if (artWrap && artCard && artSheen && !prefersReducedMotion && window.matchMedia('(min-width: 801px)').matches) {
+      let isHovering = false;
+      let targetRotX = 0;
+      let targetRotY = 0;
+      let currentRotX = 0;
+      let currentRotY = 0;
+      let rafId: number | null = null;
+
+      function renderTilt() {
+        // Smooth lerp (interpolation)
+        currentRotX += (targetRotX - currentRotX) * 0.12;
+        currentRotY += (targetRotY - currentRotY) * 0.12;
+
+        if (artCard) {
+          artCard.style.transform = `rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg)`;
+        }
+
+        if (isHovering || Math.abs(targetRotX - currentRotX) > 0.05 || Math.abs(targetRotY - currentRotY) > 0.05) {
+          rafId = requestAnimationFrame(renderTilt);
+        } else {
+          rafId = null;
+        }
+      }
+
+      artWrap.addEventListener('mouseenter', () => {
+        isHovering = true;
+        if (artSheen) artSheen.style.opacity = '1';
+        if (!rafId) rafId = requestAnimationFrame(renderTilt);
+      });
+
+      artWrap.addEventListener('mousemove', (e) => {
+        const rect = artWrap.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width; // 0 to 1
+        const y = (e.clientY - rect.top) / rect.height; // 0 to 1
+
+        targetRotY = (x - 0.5) * 8; // -4deg to 4deg
+        targetRotX = -(y - 0.5) * 8; // -4deg to 4deg
+
+        if (artSheen) {
+          artSheen.style.background = `radial-gradient(circle at ${(x * 100).toFixed(1)}% ${(y * 100).toFixed(1)}%, rgba(255, 255, 255, 0.28) 0%, transparent 60%)`;
+        }
+
+        if (!rafId) rafId = requestAnimationFrame(renderTilt);
+      });
+
+      artWrap.addEventListener('mouseleave', () => {
+        isHovering = false;
+        targetRotX = 0;
+        targetRotY = 0;
+        if (artSheen) artSheen.style.opacity = '0';
+        if (!rafId) rafId = requestAnimationFrame(renderTilt);
+      });
+    }
+
+    // 3. Magnetic Hover Pull on Primary Buttons (Desktop only)
+    if (!prefersReducedMotion && window.matchMedia('(min-width: 801px)').matches) {
+      const magneticButtons = document.querySelectorAll<HTMLElement>('.btn, .nav-join');
+
+      magneticButtons.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          
+          btn.style.transform = `translate(${x * 0.12}px, ${y * 0.12 - 2}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
+    }
+  });
+</script>

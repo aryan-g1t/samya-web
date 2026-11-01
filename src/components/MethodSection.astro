@@ -1,0 +1,274 @@
+---
+---
+
+<section class="method" id="our-method" aria-labelledby="method-heading">
+  <div class="container">
+    <div class="method-header">
+      <div>
+        <p class="eyebrow" data-animate="fade-up">02 / Our approach</p>
+        <h2 id="method-heading" data-animate="fade-up" data-delay="100">
+          Your skin. Your shade. Your experience.
+        </h2>
+      </div>
+      <p data-animate="fade-up" data-delay="200">
+        We're developing a growing shade library and a guided discovery process. Real-world feedback will help inform which shades we refine and make available.
+      </p>
+    </div>
+
+    <div class="method-grid">
+      <article class="method-step" data-animate="fade-up" data-delay="100">
+        <div class="step-top">
+          <span>01 / Understand</span>
+          <span class="dot" aria-hidden="true"></span>
+        </div>
+        <h3>Tell us.</h3>
+        <p>Share your complexion needs, preferences and experiences through a guided questionnaire.</p>
+      </article>
+
+      <article class="method-step" data-animate="fade-up" data-delay="200">
+        <div class="step-top">
+          <span>02 / Explore</span>
+          <span class="dot" aria-hidden="true"></span>
+        </div>
+        <h3>Try shades.</h3>
+        <p>Planned testing kits aim to let participants evaluate possible matches on their own skin.</p>
+      </article>
+
+      <article class="method-step" data-animate="fade-up" data-delay="300">
+        <div class="step-top">
+          <span>03 / Learn</span>
+          <span class="dot" aria-hidden="true"></span>
+        </div>
+        <h3>Build together.</h3>
+        <p>Feedback from testing will inform our understanding of shade needs and future product decisions.</p>
+      </article>
+    </div>
+
+    <div class="method-footer">
+      <span>A shade range informed by the people who wear it.</span>
+      <span class="spectrum-mini" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .method {
+    background: var(--plum);
+    color: var(--porcelain);
+    position: relative;
+    padding: 105px 0 112px;
+    overflow: hidden;
+  }
+
+  .method::before {
+    content: '';
+    width: 410px;
+    height: 410px;
+    position: absolute;
+    top: -200px;
+    right: -165px;
+    opacity: .38;
+    border: 1px solid #775369;
+    border-radius: 50%;
+    box-shadow: 0 0 0 54px rgba(119,83,105,.14), 0 0 0 108px rgba(119,83,105,.10), 0 0 0 162px rgba(119,83,105,.06);
+    pointer-events: none;
+    transition: transform 12s ease-in-out infinite alternate;
+  }
+
+  .method .eyebrow {
+    color: #DAB3CD;
+  }
+
+  .method-header {
+    display: grid;
+    grid-template-columns: 1fr .7fr;
+    align-items: end;
+    gap: 70px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .method h2 {
+    font-family: var(--serif);
+    font-size: clamp(49px, 5vw, 78px);
+    font-weight: 500;
+    letter-spacing: -.052em;
+    line-height: .98;
+    max-width: 800px;
+    margin-top: 24px;
+    color: var(--porcelain);
+  }
+
+  .method-header p {
+    color: #D7C7D0;
+    max-width: 365px;
+    line-height: 1.9;
+    font-size: 14px;
+    margin: 0 0 5px;
+    justify-self: end;
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 72px;
+    border-top: 1px solid #684A5E;
+    position: relative;
+    z-index: 1;
+  }
+
+  .method-step {
+    padding: 32px 37px 4px 0;
+    min-height: 230px;
+    transition: transform 0.25s var(--ease-out-expo);
+  }
+
+  .method-step:hover {
+    transform: translateY(-2px);
+  }
+
+  .method-step + .method-step {
+    border-left: 1px solid #684A5E;
+    padding-left: 36px;
+  }
+
+  .step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #BEA5B7;
+    font-size: 10px;
+    letter-spacing: .19em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .step-top .dot {
+    height: 11px;
+    width: 11px;
+    background: var(--purple);
+    border-radius: 50%;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, .06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .method-step:hover .dot {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 8px rgba(255, 255, 255, .12);
+  }
+
+  .method-step:nth-child(2) .dot {
+    background: var(--fuchsia);
+  }
+
+  .method-step:nth-child(3) .dot {
+    background: var(--turquoise);
+  }
+
+  .method-step h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 37px;
+    letter-spacing: -.022em;
+    margin: 36px 0 11px;
+    color: var(--porcelain);
+  }
+
+  .method-step p {
+    max-width: 300px;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #D7C7D0;
+    margin: 0;
+  }
+
+  .method-footer {
+    margin-top: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #684A5E;
+    color: #BA9EAE;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    font-weight: 650;
+    position: relative;
+    z-index: 1;
+  }
+
+  .method-footer .spectrum-mini {
+    width: 132px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--wine), var(--fuchsia), var(--yellow), var(--turquoise));
+  }
+
+  @media (max-width: 1180px) {
+    .method h2 {
+      font-size: clamp(49px, 5.25vw, 71px);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .method {
+      padding: 81px 0 76px;
+    }
+    .method-header {
+      grid-template-columns: 1fr;
+      gap: 27px;
+    }
+    .method-header p {
+      justify-self: start;
+    }
+    .method-grid {
+      margin-top: 46px;
+    }
+    .method-step {
+      padding-right: 17px;
+    }
+    .method-step + .method-step {
+      padding-left: 17px;
+    }
+    .method-step h3 {
+      font-size: 29px;
+    }
+    .method h2 {
+      font-size: clamp(50px, 8.4vw, 70px);
+    }
+  }
+
+  @media (max-width: 540px) {
+    .method {
+      padding: 70px 0;
+    }
+    .method h2 {
+      font-size: clamp(50px, 11.5vw, 67px);
+    }
+    .method-grid {
+      grid-template-columns: 1fr;
+      margin-top: 35px;
+    }
+    .method-step {
+      min-height: unset;
+      padding: 20px 0 26px;
+      border-bottom: 1px solid #684A5E;
+    }
+    .method-step + .method-step {
+      border-left: 0;
+      padding-left: 0;
+    }
+    .method-step h3 {
+      font-size: 33px;
+      margin: 16px 0 8px;
+    }
+    .method-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      font-size: 9px;
+      line-height: 1.7;
+    }
+  }
+</style>

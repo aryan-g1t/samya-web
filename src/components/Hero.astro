@@ -1,0 +1,332 @@
+---
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow" data-animate="fade-up">A new approach to complexion</p>
+      <h1 id="hero-title" data-animate="fade-up" data-delay="100">
+        Finding your foundation shade shouldn't be <em>this complicated.</em>
+      </h1>
+      <p class="lead" data-animate="fade-up" data-delay="200">
+        Too few shades to choose from. Limited opportunities to test them. And even when a shade looks right, it doesn't always wear the way you expect.
+      </p>
+      <p class="secondary" data-animate="fade-up" data-delay="300">
+        We're building a better approach to complexion products, starting with India's diverse skin tones.
+      </p>
+      <div class="action-row" data-animate="fade-up" data-delay="400">
+        <a class="btn" href="#join">
+          Help us build it <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="text-link" href="#our-method">Explore our approach ↓</a>
+      </div>
+      <p class="hero-meta" data-animate="fade-up" data-delay="500">
+        <i aria-hidden="true"></i> Founding research <span aria-hidden="true">—</span> India first
+      </p>
+    </div>
+
+    <div class="art-column" data-animate="fade-up" data-delay="200">
+      <div class="art-wrap" id="hero-art-wrap">
+        <div 
+          class="hero-art" 
+          id="hero-art-card"
+          role="img" 
+          aria-label="Abstract spectrum of plum, violet, magenta, yellow and turquoise; an artistic exploration of color, not a representation of skin tones"
+        >
+          <div class="art-sheen" id="hero-art-sheen" aria-hidden="true"></div>
+          <div class="art-upper">
+            <span>Color study / 001</span>
+            <span class="art-mark" aria-hidden="true">S</span>
+          </div>
+          <div class="art-bottom">
+            <p>An exploration<br />of color.</p>
+            <span>Variation.<br />Discovery.<br />Understanding.</span>
+          </div>
+        </div>
+      </div>
+      <div class="art-caption">
+        <span>The Sāmya: color spectrum</span>
+        <span class="dots" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 65px 0 83px;
+    position: relative;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+    gap: clamp(48px, 5vw, 98px);
+    align-items: center;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(66px, 6.45vw, 103px);
+    letter-spacing: -.058em;
+    line-height: .96;
+    margin: 40px 0 29px;
+    max-width: 725px;
+  }
+
+  .hero h1 em {
+    font-weight: 400;
+    color: var(--wine);
+    font-style: italic;
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero .lead {
+    font-size: 16px;
+    line-height: 1.88;
+    max-width: 510px;
+    color: #4E4049;
+    margin: 0 0 16px;
+    letter-spacing: -.01em;
+  }
+
+  .hero .secondary {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--muted);
+    max-width: 495px;
+    margin: 0 0 35px;
+  }
+
+  .action-row {
+    display: flex;
+    align-items: center;
+    gap: 29px;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 50px 0 0;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #8F7C87;
+  }
+
+  .hero-meta i {
+    width: 5px;
+    height: 5px;
+    background: var(--purple);
+    border-radius: 50%;
+    display: block;
+    animation: pulseDot 2.4s ease infinite;
+  }
+
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .art-column {
+    min-width: 0;
+    perspective: 1200px;
+  }
+
+  .art-wrap {
+    position: relative;
+    padding: 20px 20px 0 0;
+    transform-style: preserve-3d;
+    transition: transform 0.35s var(--ease-out-expo);
+  }
+
+  .art-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 20px 22px;
+    border: 1px solid #D8C8D0;
+    pointer-events: none;
+    transition: inset 0.3s ease, border-color 0.3s ease;
+  }
+
+  .hero-art {
+    position: relative;
+    width: 100%;
+    height: clamp(490px, 40.5vw, 610px);
+    border-radius: 260px 260px 3px 3px;
+    background-color: var(--plum);
+    background-image: linear-gradient(0deg, rgba(27, 5, 22, .38), transparent 42%), url('/images/color-study-001.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(27, 5, 22, 0.18);
+    transition: box-shadow 0.4s var(--ease-out-expo);
+  }
+
+  .art-sheen {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.22) 0%, transparent 65%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    mix-blend-mode: overlay;
+    z-index: 2;
+  }
+
+  .art-upper {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 7px;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    color: #fff7f4;
+    font-size: 9px;
+    letter-spacing: .21em;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 0 1px 8px rgba(0,0,0,.22);
+    z-index: 3;
+  }
+
+  .art-mark {
+    border: 1px solid rgba(255, 255, 255, .65);
+    border-radius: 100%;
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 500;
+    letter-spacing: -.08em;
+    text-transform: none;
+    backdrop-filter: blur(2px);
+  }
+
+  .art-bottom {
+    position: absolute;
+    bottom: 34px;
+    left: 34px;
+    right: 34px;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: end;
+    color: #FFFCF5;
+  }
+
+  .art-bottom p {
+    font-family: var(--serif);
+    font-size: clamp(31px, 3vw, 44px);
+    font-weight: 500;
+    line-height: .95;
+    letter-spacing: -.025em;
+    max-width: 285px;
+    margin: 0;
+    text-shadow: 0 2px 18px rgba(27, 5, 22, .35);
+  }
+
+  .art-bottom span {
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.9;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .30);
+  }
+
+  .art-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 19px 0 0 23px;
+    color: #806E79;
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+
+  .art-caption .dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .art-caption .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--plum);
+    transition: transform 0.2s ease;
+  }
+
+  .art-caption .dots i:hover {
+    transform: scale(1.3);
+  }
+
+  .art-caption .dots i:nth-child(2) { background: var(--purple); }
+  .art-caption .dots i:nth-child(3) { background: var(--wine); }
+  .art-caption .dots i:nth-child(4) { background: var(--fuchsia); }
+  .art-caption .dots i:nth-child(5) { background: var(--yellow); }
+  .art-caption .dots i:nth-child(6) { background: var(--turquoise); }
+  .art-caption .dots i:nth-child(7) { background: #E7DCD2; border: 1px solid #d6c8c2; }
+
+  @media (max-width: 1180px) {
+    .hero h1 { font-size: clamp(57px, 6vw, 80px); }
+    .hero-grid { gap: 42px; }
+    .hero-art { height: 525px; }
+    .art-bottom p { font-size: 34px; }
+  }
+
+  @media (max-width: 800px) {
+    .hero { padding: 59px 0 63px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .hero h1 { font-size: clamp(61px, 10.7vw, 93px); max-width: 750px; margin-top: 29px; }
+    .hero .lead { font-size: 15px; }
+    .hero-meta { margin-top: 30px; }
+    .art-column { max-width: 640px; width: 100%; margin: 0 auto; }
+    .art-wrap { padding: 13px 13px 0 0; }
+    .art-wrap::before { inset: 0 0 15px 15px; }
+    .hero-art { height: 490px; }
+    .art-caption { margin-left: 15px; }
+  }
+
+  @media (max-width: 540px) {
+    .hero { padding: 45px 0 54px; }
+    .hero h1 { font-size: clamp(58px, 13.5vw, 76px); letter-spacing: -.059em; margin-bottom: 23px; }
+    .hero .lead { font-size: 14px; line-height: 1.8; }
+    .hero .secondary { font-size: 13px; line-height: 1.8; }
+    .action-row { gap: 22px; }
+    .btn { padding: 15px 17px 15px 19px; min-height: 54px; }
+    .text-link { font-size: 10px; }
+    .hero-meta { font-size: 8px; line-height: 1.5; }
+    .art-wrap { padding: 10px 10px 0 0; }
+    .art-wrap::before { inset: 0 0 12px 12px; }
+    .hero-art { height: 380px; border-radius: 210px 210px 3px 3px; }
+    .art-upper { top: 23px; left: 50%; right: auto; font-size: 8px; }
+    .art-mark { width: 31px; height: 31px; font-size: 24px; }
+    .art-bottom { bottom: 24px; left: 24px; right: 18px; }
+    .art-bottom p { font-size: 32px; max-width: 200px; }
+    .art-bottom span { font-size: 8px; }
+    .art-caption { font-size: 8px; letter-spacing: .08em; margin: 14px 0 0 13px; }
+    .art-caption .dots i { width: 7px; height: 7px; }
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="#top" aria-label="Sāmya: home">
+      Sāmya<span class="logo-colon">:</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#the-problem" class="nav-link">The problem</a>
+      <a href="#our-method" class="nav-link">Our approach</a>
+      <button class="nav-join" type="button" data-open-modal aria-haspopup="dialog">
+        Join our research <span class="arrow" aria-hidden="true">↗</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--porcelain);
+    position: relative;
+    z-index: 20;
+  }
+
+  .header-inner {
+    height: 94px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: clamp(35px, 3vw, 45px);
+    letter-spacing: -.082em;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .logo:hover {
+    opacity: 0.9;
+  }
+
+  .logo-colon {
+    letter-spacing: -.04em;
+    color: var(--wine);
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 41px;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    white-space: nowrap;
+    transition: color .2s ease;
+    position: relative;
+    padding: 4px 0;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--purple);
+    transition: width 0.25s var(--ease-out-expo);
+  }
+
+  .nav-link:hover {
+    color: var(--purple);
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .nav-join {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 17px 14px 19px;
+    border: 1px solid var(--plum);
+    background: transparent;
+    color: var(--plum);
+    font-size: 10px;
+    letter-spacing: .12em;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background .25s ease, color .25s ease, transform .25s var(--ease-out-expo), box-shadow .25s ease;
+    will-change: transform;
+  }
+
+  .nav-join:hover {
+    background: var(--plum);
+    color: var(--porcelain);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(27, 5, 22, 0.15);
+  }
+
+  .nav-join:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 800px) {
+    .header-inner {
+      height: 75px;
+    }
+    .logo {
+      font-size: 37px;
+    }
+    .site-nav {
+      gap: 14px;
+    }
+    .nav-link {
+      display: none;
+    }
+    .nav-join {
+      padding: 12px 13px;
+      font-size: 9px;
+      gap: 13px;
+    }
+  }
+</style>
