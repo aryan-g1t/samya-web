@@ -1,11 +1,12 @@
 # Sāmya: — Beauty-Tech Complexion Shade Discovery
 
-[![Production Deployment](https://img.shields.io/badge/Production-Live%20on%20Vercel-success?style=for-the-badge&logo=vercel)](https://samya-inky.vercel.app)
+[![Production Deployment](https://img.shields.io/badge/Production-Live%20at%20samyaglobal.com-success?style=for-the-badge&logo=vercel)](https://www.samyaglobal.com)
 [![Astro 5](https://img.shields.io/badge/Astro-5.18-FF5D01?style=for-the-badge&logo=astro&logoColor=white)](https://astro.build)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%205.x-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Zero CLS](https://img.shields.io/badge/CLS-0.00-brightgreen?style=for-the-badge)](https://web.dev/cls/)
 
-> **Live Production:** [https://samya-inky.vercel.app](https://samya-inky.vercel.app)  
+> **Official Domain:** [https://www.samyaglobal.com](https://www.samyaglobal.com)  
+> **Apex Domain:** [https://samyaglobal.com](https://samyaglobal.com)  
 > **Source Repository:** [https://github.com/aryan-g1t/samya-web](https://github.com/aryan-g1t/samya-web)
 
 ---
@@ -165,3 +166,4 @@ node scripts/capture_screenshots.js
 ## ✦ License
 
 Private & Proprietary — Sāmya Beauty-Tech.
+
