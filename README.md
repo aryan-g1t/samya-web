@@ -43,6 +43,12 @@ This repository houses the high-fidelity web application built from an exact 1:1
   - **Screen 10:** Halfway Milestone celebration card styled in Wine (`#76022E`) with Electric Yellow (`#F5C928`) CTA.
   - **Screen 18:** Final study confirmation state with participant ID.
 
+### 4. Secure Admin Console & Data Management
+- **Dedicated Route:** `/admin` with encrypted session auth and brute-force protection.
+- **Executive KPIs:** Live metrics for total participants, completion rate, kit testing candidates, and shade depth distribution.
+- **Full CRUD Suite:** Search, filter, view complete 21-parameter profiles, update testing kit statuses (`Pending`, `Kit Sent`, `Delivered`, `Archived`), append internal research notes, and add offline participants.
+- **Export Tools:** Instant filtered CSV downloads and 1-click clipboard copy of participant emails for batch outreach.
+
 ---
 
 ## ✦ Design System Tokens
