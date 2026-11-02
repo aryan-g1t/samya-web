@@ -1,0 +1,1671 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Sāmya: Admin Console">
+  <div id="admin-root" class="admin-app">
+    <!-- Header -->
+    <header class="admin-topbar">
+      <div class="topbar-inner">
+        <div class="brand-group">
+          <a href="/" class="brand-logo" aria-label="Sāmya Home">
+            <img src="/images/logo-white.png" alt="Sāmya:" class="admin-logo-img" />
+          </a>
+          <span class="portal-badge">ADMIN CONSOLE</span>
+        </div>
+        <div class="topbar-user" id="topbar-user" style="display: none;">
+          <span class="user-greeting">Signed in as <strong id="current-username">admin</strong></span>
+          <button type="button" class="btn-logout" id="btn-logout">Sign Out</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Spectrum Bar -->
+    <div class="spectrum-bar"></div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="admin-main">
+      <!-- 1. LOGIN VIEW -->
+      <section id="login-view" class="view-login">
+        <div class="login-card">
+          <p class="login-eyebrow">RESTRICTED ACCESS</p>
+          <h1 class="login-title">Sāmya: Research Console</h1>
+          <p class="login-desc">Enter administrator credentials to manage participant cohorts, view shade discovery analytics, and export dataset records.</p>
+
+          <form id="login-form" class="login-form">
+            <div id="login-error" class="login-alert" style="display: none;"></div>
+
+            <div class="field-group">
+              <label for="username">USERNAME</label>
+              <input type="text" id="username" name="username" placeholder="e.g. admin" required autocomplete="username" />
+            </div>
+
+            <div class="field-group">
+              <label for="password">PASSWORD</label>
+              <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password" />
+            </div>
+
+            <button type="submit" id="btn-login" class="btn-primary-admin">
+              Sign In to Console →
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <span>Encrypted Session · Strict Access Control</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. DASHBOARD VIEW (Shown once authenticated) -->
+      <section id="dashboard-view" class="view-dashboard" style="display: none;">
+        <!-- KPI Metrics Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <p class="kpi-label">TOTAL PARTICIPANTS</p>
+            <h3 class="kpi-value" id="kpi-total">0</h3>
+            <p class="kpi-sub">Total registered cohort</p>
+          </div>
+          <div class="kpi-card">
+            <p class="kpi-label">FULL PROFILES</p>
+            <h3 class="kpi-value" id="kpi-full">0</h3>
+            <p class="kpi-sub" id="kpi-completion-rate">0% completion rate</p>
+          </div>
+          <div class="kpi-card">
+            <p class="kpi-label">KIT TESTING CANDIDATES</p>
+            <h3 class="kpi-value" id="kpi-candidates">0</h3>
+            <p class="kpi-sub">Consented to sample vials</p>
+          </div>
+          <div class="kpi-card kpi-spectrum-card">
+            <p class="kpi-label">SHADE DEPTH BALANCE</p>
+            <div class="depth-bars">
+              <div class="depth-bar-row">
+                <span class="depth-name">Fair</span>
+                <div class="progress-track"><div id="depth-bar-fair" class="progress-bar bar-fair"></div></div>
+                <span class="depth-count" id="depth-count-fair">0</span>
+              </div>
+              <div class="depth-bar-row">
+                <span class="depth-name">Medium</span>
+                <div class="progress-track"><div id="depth-bar-medium" class="progress-bar bar-medium"></div></div>
+                <span class="depth-count" id="depth-count-medium">0</span>
+              </div>
+              <div class="depth-bar-row">
+                <span class="depth-name">Rich</span>
+                <div class="progress-track"><div id="depth-bar-rich" class="progress-bar bar-rich"></div></div>
+                <span class="depth-count" id="depth-count-rich">0</span>
+              </div>
+              <div class="depth-bar-row">
+                <span class="depth-name">Deep</span>
+                <div class="progress-track"><div id="depth-bar-deep" class="progress-bar bar-deep"></div></div>
+                <span class="depth-count" id="depth-count-deep">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Controls Bar -->
+        <div class="controls-card">
+          <div class="search-row">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="filter-search" class="search-input" placeholder="Search by Name, Email, Phone, ID, City, Brand..." />
+              <button type="button" id="btn-clear-search" class="btn-clear-search" style="display: none;">✕</button>
+            </div>
+            <div class="action-buttons">
+              <button type="button" class="btn-ctrl btn-add" id="btn-open-create">
+                + Add Participant
+              </button>
+              <button type="button" class="btn-ctrl btn-export" id="btn-export-csv">
+                📥 Export CSV
+              </button>
+              <button type="button" class="btn-ctrl btn-copy" id="btn-copy-emails">
+                📋 Copy Emails
+              </button>
+            </div>
+          </div>
+
+          <!-- Faceted Filters -->
+          <div class="filters-row">
+            <div class="filter-group">
+              <span class="filter-label">DEPTH:</span>
+              <div class="filter-pills" id="depth-pills">
+                <button type="button" class="pill active" data-depth="all">All</button>
+                <button type="button" class="pill" data-depth="fair">Fair</button>
+                <button type="button" class="pill" data-depth="medium">Medium</button>
+                <button type="button" class="pill" data-depth="rich">Rich</button>
+                <button type="button" class="pill" data-depth="deep">Deep</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">KIT STATUS:</span>
+              <select id="filter-kit" class="select-filter">
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="kit sent">Kit Sent</option>
+                <option value="delivered">Delivered</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">COMPLETION:</span>
+              <select id="filter-completion" class="select-filter">
+                <option value="all">All Submissions</option>
+                <option value="full">Full Profile Only</option>
+                <option value="milestone">Initial Milestone</option>
+              </select>
+            </div>
+
+            <div class="record-counter">
+              Showing <strong id="record-filtered-count">0</strong> of <span id="record-total-count">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Responses Table -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="data-table" id="data-table">
+              <thead>
+                <tr>
+                  <th>PARTICIPANT ID</th>
+                  <th>FULL NAME</th>
+                  <th>CONTACT</th>
+                  <th>LOCATION</th>
+                  <th>SKIN DEPTH & UNDERTONE</th>
+                  <th>COMPLETION</th>
+                  <th>KIT STATUS</th>
+                  <th style="text-align: right;">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <tr>
+                  <td colspan="8" class="empty-cell">Loading participant cohort...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 3. SLIDE-OUT DETAIL & EDIT DRAWER -->
+    <div id="drawer-overlay" class="drawer-overlay" style="display: none;"></div>
+    <aside id="detail-drawer" class="detail-drawer">
+      <div class="drawer-header">
+        <div>
+          <span class="drawer-eyebrow">PARTICIPANT PROFILE</span>
+          <h2 class="drawer-title" id="drawer-participant-id">SAM-000000</h2>
+        </div>
+        <button type="button" class="btn-close-drawer" id="btn-close-drawer">✕</button>
+      </div>
+
+      <div class="drawer-body" id="drawer-body">
+        <form id="edit-entry-form">
+          <!-- Management Box -->
+          <div class="mgmt-box">
+            <h4 class="mgmt-title">Testing Kit Management</h4>
+            <div class="mgmt-row">
+              <div class="field-group">
+                <label for="edit-kit-status">KIT STATUS</label>
+                <select id="edit-kit-status" class="mgmt-select">
+                  <option value="Pending">Pending Review</option>
+                  <option value="Kit Sent">Kit Sent</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group" style="margin-top: 12px;">
+              <label for="edit-internal-notes">INTERNAL RESEARCH NOTES</label>
+              <textarea id="edit-internal-notes" rows="3" class="mgmt-textarea" placeholder="Add tracking numbers, sample shades sent, or custom notes..."></textarea>
+            </div>
+            <button type="submit" class="btn-save-mgmt" id="btn-save-entry">Save Changes</button>
+          </div>
+
+          <!-- Full 21 Parameters Overview -->
+          <h4 class="section-divider">Profile Details</h4>
+          <div class="detail-grid" id="drawer-details-content">
+            <!-- Dynamically populated -->
+          </div>
+
+          <div class="drawer-danger-zone">
+            <button type="button" class="btn-delete-entry" id="btn-delete-entry">
+              🗑️ Delete This Participant Record
+            </button>
+          </div>
+        </form>
+      </div>
+    </aside>
+
+    <!-- 4. MANUAL CREATE MODAL -->
+    <dialog id="create-modal" class="admin-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Record Offline Participant</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-create">✕</button>
+        </div>
+        <form id="create-entry-form" class="modal-form">
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label>FULL NAME *</label>
+              <input type="text" id="create-name" required placeholder="e.g. Priya Patel" />
+            </div>
+            <div class="field-group">
+              <label>EMAIL *</label>
+              <input type="email" id="create-email" required placeholder="priya@example.com" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label>PHONE</label>
+              <input type="tel" id="create-phone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="field-group">
+              <label>CITY / TOWN</label>
+              <input type="text" id="create-city" placeholder="e.g. Bengaluru" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="field-group">
+              <label>SKIN TONE DEPTH</label>
+              <select id="create-depth">
+                <option value="100 / Fair">100 / Fair</option>
+                <option value="200 / Medium">200 / Medium</option>
+                <option value="300 / Medium Deep" selected>300 / Medium Deep</option>
+                <option value="400 / Deep">400 / Deep</option>
+                <option value="I don't know">I don't know</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>UNDERTONE</label>
+              <select id="create-undertone">
+                <option value="Warm (Golden, yellow, peachy)">Warm (Golden)</option>
+                <option value="Cool (Rosy, pink, reddish)">Cool (Rosy)</option>
+                <option value="Neutral (Balanced)">Neutral</option>
+                <option value="Olive (Greenish-gold)">Olive</option>
+                <option value="Unsure">Unsure</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>CURRENT BRAND & SHADE</label>
+            <input type="text" id="create-brand" placeholder="e.g. MAC NC42, Maybelline 310" />
+          </div>
+          <div class="field-group">
+            <label>INTERNAL NOTES</label>
+            <textarea id="create-notes" rows="2" placeholder="Testing kit vials or in-person notes..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="btn-cancel-create">Cancel</button>
+            <button type="submit" class="btn-submit-create">Save Participant</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="toast" style="display: none;"></div>
+  </div>
+</Layout>
+
+<style>
+  :root {
+    --porcelain: #F5EFE8;
+    --plum: #1B0516;
+    --warm-white: #FCF9F5;
+    --line: #DCD0D3;
+    --muted: #6E5D68;
+    --wine: #76022E;
+    --wine-hover: #5D0224;
+    --yellow: #F5C928;
+    --purple: #7114AC;
+    --sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  .admin-app {
+    min-height: 100vh;
+    background: #F9F6F0;
+    font-family: var(--sans);
+    color: var(--plum);
+  }
+
+  /* Topbar */
+  .admin-topbar {
+    background: var(--plum);
+    color: #FFFFFF;
+    padding: 16px 32px;
+  }
+
+  .topbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .admin-logo-img {
+    height: 28px;
+    width: auto;
+    display: block;
+  }
+
+  .portal-badge {
+    background: var(--wine);
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border-radius: 9999px;
+  }
+
+  .topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+  }
+
+  .btn-logout {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-logout:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #FFFFFF;
+  }
+
+  .spectrum-bar {
+    height: 3px;
+    background: linear-gradient(90deg, #76022E 0%, #7114AC 25%, #E40485 50%, #F5C928 75%, #00AEBD 100%);
+  }
+
+  /* Container */
+  .admin-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* Login Card */
+  .view-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(80vh - 80px);
+  }
+
+  .login-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px 48px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 16px 48px rgba(27, 5, 22, 0.08);
+  }
+
+  .login-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--wine);
+    margin-bottom: 6px;
+  }
+
+  .login-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--plum);
+    margin-bottom: 8px;
+  }
+
+  .login-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .login-alert {
+    background: #FEECEB;
+    border-left: 3px solid #D92D20;
+    color: #912018;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .field-group label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--plum);
+  }
+
+  .field-group input,
+  .field-group select {
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--plum);
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field-group input:focus,
+  .field-group select:focus {
+    border-color: var(--wine);
+    box-shadow: 0 0 0 3px rgba(118, 2, 46, 0.15);
+  }
+
+  .btn-primary-admin {
+    width: 100%;
+    height: 48px;
+    background: var(--wine);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 9999px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+  }
+
+  .btn-primary-admin:hover {
+    background: var(--wine-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(118, 2, 46, 0.25);
+  }
+
+  .login-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+
+  /* Dashboard View */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 12px rgba(27, 5, 22, 0.03);
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--plum);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--wine);
+    font-weight: 600;
+  }
+
+  .kpi-spectrum-card {
+    padding-bottom: 16px;
+  }
+
+  .depth-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .depth-bar-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 20px;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: #EEE7DE;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+  }
+
+  .bar-fair { background: #E6BC98; }
+  .bar-medium { background: #C58B58; }
+  .bar-rich { background: #8E5632; }
+  .bar-deep { background: #552F1D; }
+
+  /* Controls Card */
+  .controls-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(27, 5, 22, 0.03);
+  }
+
+  .search-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 500px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 36px 0 38px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    border-color: var(--wine);
+    box-shadow: 0 0 0 3px rgba(118, 2, 46, 0.12);
+  }
+
+  .btn-clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-ctrl {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .btn-add {
+    background: var(--wine);
+    color: #FFFFFF;
+  }
+
+  .btn-add:hover {
+    background: var(--wine-hover);
+  }
+
+  .btn-export {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    color: var(--plum);
+  }
+
+  .btn-export:hover {
+    background: var(--porcelain);
+  }
+
+  .btn-copy {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    color: var(--plum);
+  }
+
+  .btn-copy:hover {
+    background: var(--porcelain);
+  }
+
+  /* Filters Row */
+  .filters-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #F0EAE1;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: 6px;
+  }
+
+  .pill {
+    background: #F4EFEB;
+    border: 1px solid transparent;
+    color: var(--plum);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pill.active {
+    background: var(--wine);
+    color: #FFFFFF;
+  }
+
+  .select-filter {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 12px;
+    background: #FFFFFF;
+    color: var(--plum);
+    outline: none;
+  }
+
+  .record-counter {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Table Card */
+  .table-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(27, 5, 22, 0.03);
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .data-table th {
+    background: #FAF6F0;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  .data-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #F2ECE4;
+    color: #2F242C;
+    vertical-align: middle;
+  }
+
+  .data-table tr:hover td {
+    background: #FDFBF8;
+  }
+
+  .empty-cell {
+    text-align: center;
+    padding: 40px !important;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .id-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wine);
+    background: rgba(118, 2, 46, 0.07);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .status-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .status-pending { background: #FEF3C7; color: #92400E; }
+  .status-sent { background: #DBEAFE; color: #1E40AF; }
+  .status-delivered { background: #D1FAE5; color: #065F46; }
+  .status-archived { background: #F3F4F6; color: #4B5563; }
+
+  .tone-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+
+  .tone-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .actions-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .btn-action {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-action:hover {
+    background: var(--porcelain);
+    border-color: var(--muted);
+  }
+
+  /* Slide-Out Detail Drawer */
+  .drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(27, 5, 22, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+  }
+
+  .detail-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(90vw, 560px);
+    background: #FFFFFF;
+    box-shadow: -16px 0 48px rgba(27, 5, 22, 0.25);
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .drawer-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--wine);
+  }
+
+  .drawer-title {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--plum);
+  }
+
+  .btn-close-drawer {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  .drawer-body {
+    padding: 28px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .mgmt-box {
+    background: #FAF6F0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .mgmt-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--wine);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mgmt-select,
+  .mgmt-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 13px;
+    outline: none;
+    background: #FFFFFF;
+  }
+
+  .btn-save-mgmt {
+    margin-top: 12px;
+    width: 100%;
+    height: 40px;
+    background: var(--wine);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .section-divider {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 20px 0 12px;
+    border-bottom: 1px solid #EFEAE2;
+    padding-bottom: 6px;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .detail-key {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .detail-val {
+    color: var(--plum);
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .drawer-danger-zone {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid #FEECEB;
+  }
+
+  .btn-delete-entry {
+    width: 100%;
+    padding: 12px;
+    background: #FEECEB;
+    border: 1px solid #FECDCA;
+    color: #D92D20;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-delete-entry:hover {
+    background: #FECDCA;
+  }
+
+  /* Create Modal */
+  .admin-modal {
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    max-width: 540px;
+    width: 90vw;
+    box-shadow: 0 24px 64px rgba(27, 5, 22, 0.3);
+    margin: auto;
+  }
+
+  .admin-modal::backdrop {
+    background: rgba(27, 5, 22, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    padding: 28px;
+    background: #FFFFFF;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .modal-header h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--plum);
+  }
+
+  .btn-close-modal {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn-cancel {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-submit-create {
+    padding: 10px 20px;
+    background: var(--wine);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--plum);
+    color: #FFFFFF;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+    animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes toastIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @media (max-width: 900px) {
+    .kpi-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .search-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .search-wrap {
+      max-width: none;
+    }
+    .action-buttons {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .kpi-grid {
+      grid-template-columns: 1fr;
+    }
+    .form-grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Admin Console Client Controller
+  let currentToken: string | null = null;
+  let allEntries: any[] = [];
+  let currentDetailParticipantId: string | null = null;
+
+  function showToast(msg: string) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3500);
+  }
+
+  function getDepthColor(depth: string) {
+    const d = (depth || '').toLowerCase();
+    if (d.includes('fair') || d.includes('100')) return '#E6BC98';
+    if (d.includes('rich') || d.includes('300')) return '#8E5632';
+    if (d.includes('deep') || d.includes('400')) return '#552F1D';
+    return '#C58B58'; // medium
+  }
+
+  function escapeHtml(text: any) {
+    if (text === null || text === undefined) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // Check initial login state
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/admin/login');
+      const data = await res.json();
+      if (data.authenticated) {
+        showDashboard(data.user);
+      } else {
+        showLogin();
+      }
+    } catch {
+      showLogin();
+    }
+  }
+
+  function showLogin() {
+    const loginView = document.getElementById('login-view');
+    const dashView = document.getElementById('dashboard-view');
+    const topUser = document.getElementById('topbar-user');
+    if (loginView) loginView.style.display = 'flex';
+    if (dashView) dashView.style.display = 'none';
+    if (topUser) topUser.style.display = 'none';
+  }
+
+  function showDashboard(username: string) {
+    const loginView = document.getElementById('login-view');
+    const dashView = document.getElementById('dashboard-view');
+    const topUser = document.getElementById('topbar-user');
+    const userLabel = document.getElementById('current-username');
+
+    if (loginView) loginView.style.display = 'none';
+    if (dashView) dashView.style.display = 'block';
+    if (topUser) topUser.style.display = 'flex';
+    if (userLabel) userLabel.textContent = username;
+
+    fetchEntries();
+  }
+
+  // Fetch entries & KPIs
+  async function fetchEntries() {
+    const searchInput = (document.getElementById('filter-search') as HTMLInputElement)?.value || '';
+    const activeDepth = document.querySelector('#depth-pills .pill.active')?.getAttribute('data-depth') || 'all';
+    const kitSelect = (document.getElementById('filter-kit') as HTMLSelectElement)?.value || 'all';
+    const compSelect = (document.getElementById('filter-completion') as HTMLSelectElement)?.value || 'all';
+
+    const params = new URLSearchParams({
+      search: searchInput,
+      depth: activeDepth,
+      kitStatus: kitSelect,
+      completion: compSelect
+    });
+
+    const headers: Record<string, string> = {};
+    if (currentToken) headers['X-Admin-Token'] = currentToken;
+
+    try {
+      const res = await fetch(`/api/admin/entries?${params.toString()}`, { headers });
+      if (res.status === 401) {
+        showLogin();
+        return;
+      }
+
+      const data = await res.json();
+      allEntries = data.entries || [];
+
+      // Update KPI Cards
+      const stats = data.stats || {};
+      const total = stats.total || 0;
+      const full = stats.fullProfiles || 0;
+      const rate = total > 0 ? Math.round((full / total) * 100) : 0;
+
+      const kpiTotal = document.getElementById('kpi-total');
+      const kpiFull = document.getElementById('kpi-full');
+      const kpiCompRate = document.getElementById('kpi-completion-rate');
+      const kpiCandidates = document.getElementById('kpi-candidates');
+      const recFiltered = document.getElementById('record-filtered-count');
+      const recTotal = document.getElementById('record-total-count');
+
+      if (kpiTotal) kpiTotal.textContent = total.toString();
+      if (kpiFull) kpiFull.textContent = full.toString();
+      if (kpiCompRate) kpiCompRate.textContent = `${rate}% completion rate`;
+      if (kpiCandidates) kpiCandidates.textContent = (stats.kitCandidates || 0).toString();
+      if (recFiltered) recFiltered.textContent = (data.filteredCount || 0).toString();
+      if (recTotal) recTotal.textContent = total.toString();
+
+      // Update Depth Bars
+      const dist = stats.depthDistribution || {};
+      const maxVal = Math.max(dist.fair || 0, dist.medium || 0, dist.rich || 0, dist.deep || 0, 1);
+
+      updateBar('fair', dist.fair || 0, maxVal);
+      updateBar('medium', dist.medium || 0, maxVal);
+      updateBar('rich', dist.rich || 0, maxVal);
+      updateBar('deep', dist.deep || 0, maxVal);
+
+      // Render Table
+      renderTable(allEntries);
+
+    } catch (err) {
+      console.error('Failed to fetch admin entries:', err);
+    }
+  }
+
+  function updateBar(key: string, count: number, max: number) {
+    const bar = document.getElementById(`depth-bar-${key}`);
+    const label = document.getElementById(`depth-count-${key}`);
+    if (bar) bar.style.width = `${Math.round((count / max) * 100)}%`;
+    if (label) label.textContent = count.toString();
+  }
+
+  // Render Table Rows
+  function renderTable(entries: any[]) {
+    const tbody = document.getElementById('table-body');
+    if (!tbody) return;
+
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-cell">No participant records matching current filters.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = entries.map(item => {
+      const kitStatus = item.kitStatus || (item.sampleTestingConsent?.toLowerCase().includes('yes') ? 'Pending' : 'Archived');
+      const statusClass = `status-${kitStatus.toLowerCase().replace(/\s+/g, '-')}`;
+      const depthColor = getDepthColor(item.skinToneDepth);
+
+      return `
+        <tr>
+          <td><span class="id-pill">${escapeHtml(item.participantId)}</span></td>
+          <td><strong>${escapeHtml(item.fullName || 'Anonymous')}</strong></td>
+          <td>
+            <div>${escapeHtml(item.email || '—')}</div>
+            <div style="font-size: 11px; color: var(--muted);">${escapeHtml(item.phone || '')}</div>
+          </td>
+          <td>${escapeHtml(item.city || item.state || '—')}</td>
+          <td>
+            <div class="tone-badge">
+              <span class="tone-dot" style="background-color: ${depthColor};"></span>
+              <span>${escapeHtml(item.skinToneDepth || 'Unknown')}</span>
+            </div>
+            <div style="font-size: 10px; color: var(--muted); margin-top: 2px;">${escapeHtml(item.undertone || '')}</div>
+          </td>
+          <td>
+            <span style="font-size: 11px; font-weight: 600; color: ${item.stageCompleted === 'Full Profile' ? 'var(--wine)' : 'var(--muted)'};">
+              ${escapeHtml(item.stageCompleted || 'Initial')}
+            </span>
+          </td>
+          <td>
+            <span class="status-tag ${statusClass}">${escapeHtml(kitStatus)}</span>
+          </td>
+          <td>
+            <div class="actions-group">
+              <button type="button" class="btn-action btn-view" data-id="${escapeHtml(item.participantId)}">👁️ View</button>
+              <button type="button" class="btn-action btn-del" data-id="${escapeHtml(item.participantId)}" style="color: #D92D20;">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Attach row action listeners
+    tbody.querySelectorAll('.btn-view').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (id) openDetailDrawer(id);
+      });
+    });
+
+    tbody.querySelectorAll('.btn-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (id) confirmDeleteEntry(id);
+      });
+    });
+  }
+
+  // Open Drawer
+  function openDetailDrawer(participantId: string) {
+    const entry = allEntries.find(e => e.participantId === participantId);
+    if (!entry) return;
+
+    currentDetailParticipantId = participantId;
+
+    const drawer = document.getElementById('detail-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    const title = document.getElementById('drawer-participant-id');
+    const statusSelect = document.getElementById('edit-kit-status') as HTMLSelectElement | null;
+    const notesText = document.getElementById('edit-internal-notes') as HTMLTextAreaElement | null;
+    const detailsContainer = document.getElementById('drawer-details-content');
+
+    if (title) title.textContent = participantId;
+    if (statusSelect) statusSelect.value = entry.kitStatus || 'Pending';
+    if (notesText) notesText.value = entry.internalNotes || '';
+
+    if (detailsContainer) {
+      const fields = [
+        ['Timestamp', entry.timestamp || '—'],
+        ['Full Name', entry.fullName || '—'],
+        ['Email Address', entry.email || '—'],
+        ['Phone Number', entry.phone || '—'],
+        ['State / Region', entry.state || '—'],
+        ['City / Town', entry.city || '—'],
+        ['Skin Tone Depth', entry.skinToneDepth || '—'],
+        ['Undertone', entry.undertone || '—'],
+        ['Current Brand / Shade', entry.currentBrandAndShade || '—'],
+        ['Neck vs Face Match', entry.neckVsFace || '—'],
+        ['Past Experience', entry.pastExperience || '—'],
+        ['Biggest Challenges', entry.biggestChallenges || '—'],
+        ['Match Priorities', entry.simplifiedMatchNeeds || '—'],
+        ['Seasonal Shift', entry.seasonalShift || '—'],
+        ['Testing Kit Consent', entry.sampleTestingConsent || '—'],
+        ['Selection Confidence', entry.selectionConfidence || '—'],
+        ['Current Skin Status', entry.skinStatusNow || '—'],
+        ['Opt-in Updates', entry.optInUpdates || '—']
+      ];
+
+      detailsContainer.innerHTML = fields.map(([key, val]) => `
+        <div class="detail-row">
+          <span class="detail-key">${key}:</span>
+          <span class="detail-val">${escapeHtml(val)}</span>
+        </div>
+      `).join('');
+    }
+
+    drawer?.classList.add('open');
+    if (overlay) overlay.style.display = 'block';
+  }
+
+  function closeDetailDrawer() {
+    const drawer = document.getElementById('detail-drawer');
+    const overlay = document.getElementById('drawer-overlay');
+    drawer?.classList.remove('open');
+    if (overlay) overlay.style.display = 'none';
+    currentDetailParticipantId = null;
+  }
+
+  // Delete Entry
+  async function confirmDeleteEntry(participantId: string) {
+    if (!confirm(`Are you sure you want to delete participant ${participantId}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (currentToken) headers['X-Admin-Token'] = currentToken;
+
+      const res = await fetch('/api/admin/entry', {
+        method: 'DELETE',
+        headers,
+        body: JSON.stringify({ participantId })
+      });
+
+      if (res.ok) {
+        showToast(`Record ${participantId} deleted`);
+        closeDetailDrawer();
+        fetchEntries();
+      } else {
+        alert('Failed to delete entry');
+      }
+    } catch {
+      alert('Error during deletion');
+    }
+  }
+
+  // Export CSV
+  function exportFilteredCsv() {
+    if (allEntries.length === 0) {
+      alert('No records to export');
+      return;
+    }
+
+    const headers = [
+      'Timestamp', 'Participant ID', 'Full Name', 'Email', 'Phone', 'City', 'State',
+      'Skin Tone Depth', 'Undertone', 'Stage', 'Kit Status', 'Brand Used', 'Testing Consent'
+    ];
+
+    const rows = [headers.join(',')];
+
+    for (const r of allEntries) {
+      const row = [
+        r.timestamp, r.participantId, r.fullName, r.email, r.phone, r.city, r.state,
+        r.skinToneDepth, r.undertone, r.stageCompleted, r.kitStatus || 'Pending',
+        r.currentBrandAndShade, r.sampleTestingConsent
+      ].map(val => `"${String(val || '').replace(/"/g, '""')}"`);
+
+      rows.push(row.join(','));
+    }
+
+    const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `samya_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${allEntries.length} records`);
+  }
+
+  // Copy Emails
+  function copyFilteredEmails() {
+    const emails = allEntries.map(e => e.email?.trim()).filter(Boolean);
+    if (emails.length === 0) {
+      alert('No email addresses found in current filter');
+      return;
+    }
+    const emailList = Array.from(new Set(emails)).join(', ');
+    navigator.clipboard.writeText(emailList);
+    showToast(`Copied ${emails.length} email addresses to clipboard!`);
+  }
+
+  // Event Listeners setup
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+
+    // Login Form Submit
+    const loginForm = document.getElementById('login-form');
+    loginForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usernameInput = (document.getElementById('username') as HTMLInputElement)?.value;
+      const passwordInput = (document.getElementById('password') as HTMLInputElement)?.value;
+      const errBox = document.getElementById('login-error');
+
+      if (errBox) errBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: usernameInput, password: passwordInput })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+          if (data.token) currentToken = data.token;
+          showDashboard(data.user);
+        } else {
+          if (errBox) {
+            errBox.textContent = data.error || 'Authentication failed';
+            errBox.style.display = 'block';
+          }
+        }
+      } catch {
+        if (errBox) {
+          errBox.textContent = 'Connection error. Please try again.';
+          errBox.style.display = 'block';
+        }
+      }
+    });
+
+    // Logout
+    document.getElementById('btn-logout')?.addEventListener('click', async () => {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      currentToken = null;
+      showLogin();
+    });
+
+    // Search input (debounce)
+    let searchTimeout: any = null;
+    const searchInput = document.getElementById('filter-search') as HTMLInputElement | null;
+    const clearSearchBtn = document.getElementById('btn-clear-search');
+
+    searchInput?.addEventListener('input', () => {
+      if (clearSearchBtn) clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(fetchEntries, 300);
+    });
+
+    clearSearchBtn?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+      fetchEntries();
+    });
+
+    // Depth Pills
+    document.querySelectorAll('#depth-pills .pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#depth-pills .pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        fetchEntries();
+      });
+    });
+
+    // Select filters
+    document.getElementById('filter-kit')?.addEventListener('change', fetchEntries);
+    document.getElementById('filter-completion')?.addEventListener('change', fetchEntries);
+
+    // Export & Copy
+    document.getElementById('btn-export-csv')?.addEventListener('click', exportFilteredCsv);
+    document.getElementById('btn-copy-emails')?.addEventListener('click', copyFilteredEmails);
+
+    // Drawer close
+    document.getElementById('btn-close-drawer')?.addEventListener('click', closeDetailDrawer);
+    document.getElementById('drawer-overlay')?.addEventListener('click', closeDetailDrawer);
+
+    // Save changes in drawer
+    document.getElementById('edit-entry-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentDetailParticipantId) return;
+
+      const kitStatus = (document.getElementById('edit-kit-status') as HTMLSelectElement)?.value;
+      const internalNotes = (document.getElementById('edit-internal-notes') as HTMLTextAreaElement)?.value;
+
+      try {
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['X-Admin-Token'] = currentToken;
+
+        const res = await fetch('/api/admin/entry', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({
+            participantId: currentDetailParticipantId,
+            updates: { kitStatus, internalNotes }
+          })
+        });
+
+        if (res.ok) {
+          showToast('Participant status updated successfully');
+          fetchEntries();
+        } else {
+          alert('Failed to update participant');
+        }
+      } catch {
+        alert('Network error while saving updates');
+      }
+    });
+
+    // Drawer Delete button
+    document.getElementById('btn-delete-entry')?.addEventListener('click', () => {
+      if (currentDetailParticipantId) confirmDeleteEntry(currentDetailParticipantId);
+    });
+
+    // Create Modal
+    const createModal = document.getElementById('create-modal') as HTMLDialogElement | null;
+    document.getElementById('btn-open-create')?.addEventListener('click', () => createModal?.showModal());
+    document.getElementById('btn-close-create')?.addEventListener('click', () => createModal?.close());
+    document.getElementById('btn-cancel-create')?.addEventListener('click', () => createModal?.close());
+
+    // Submit Create Form
+    document.getElementById('create-entry-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        fullName: (document.getElementById('create-name') as HTMLInputElement)?.value,
+        email: (document.getElementById('create-email') as HTMLInputElement)?.value,
+        phone: (document.getElementById('create-phone') as HTMLInputElement)?.value,
+        city: (document.getElementById('create-city') as HTMLInputElement)?.value,
+        skinToneDepth: (document.getElementById('create-depth') as HTMLSelectElement)?.value,
+        undertone: (document.getElementById('create-undertone') as HTMLSelectElement)?.value,
+        currentBrandAndShade: (document.getElementById('create-brand') as HTMLInputElement)?.value,
+        internalNotes: (document.getElementById('create-notes') as HTMLTextAreaElement)?.value,
+        kitStatus: 'Pending',
+        sampleTestingConsent: 'Yes',
+        stageCompleted: 'Full Profile'
+      };
+
+      try {
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['X-Admin-Token'] = currentToken;
+
+        const res = await fetch('/api/admin/entry', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast('Offline participant recorded successfully!');
+          createModal?.close();
+          (document.getElementById('create-entry-form') as HTMLFormElement)?.reset();
+          fetchEntries();
+        } else {
+          alert('Failed to create participant record');
+        }
+      } catch {
+        alert('Error creating participant');
+      }
+    });
+  });
+</script>
