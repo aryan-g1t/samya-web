@@ -576,7 +576,7 @@ const indianStates = [
           </div>
           <h2>Thank you for helping shape<br /><span class="brand-wine">Sāmya:</span></h2>
           <p class="complete-desc">Your shade profile is complete. If you're selected for a complimentary shade-testing kit, we'll be in touch at the email you provided. Selection is limited and completing the profile doesn't guarantee a kit.</p>
-          <span class="participant-id">PARTICIPANT ID · SAM-000004</span>
+          <span class="participant-id" id="participantIdBadge">PARTICIPANT ID · SAM-000004</span>
           <button type="button" class="btn btn-outline-back btn-done" id="doneModalBtn">
             DONE
           </button>
@@ -1433,6 +1433,113 @@ const indianStates = [
       }
     }
 
+    // Centralized Survey Response Collector & Webhook Dispatcher
+    const surveyState: Record<string, any> = {
+      participantId: 'SAM-' + Math.floor(100000 + Math.random() * 900000),
+      timestamp: new Date().toISOString(),
+      biggestChallenges: ['The shade looks different after wearing it.'],
+      simplifiedMatchNeeds: ['Testing at home in natural light'],
+      skinToneDepth: '300 / Medium Deep'
+    };
+
+    function collectCurrentState(stageCompleted: 'Full Profile' | 'Initial Experience') {
+      surveyState.fullName = (document.getElementById('fullName') as HTMLInputElement)?.value || '';
+      surveyState.email = (document.getElementById('userEmail') as HTMLInputElement)?.value || '';
+      surveyState.phone = (document.getElementById('userPhone') as HTMLInputElement)?.value || '';
+      surveyState.optInUpdates = (document.getElementById('emailOptIn') as HTMLInputElement)?.checked ?? true;
+
+      // Screen 3: State
+      surveyState.state = (document.getElementById('stateSelect') as HTMLSelectElement)?.value || '';
+
+      // Screen 4: Past Experience
+      const pastExp = dialog?.querySelector<HTMLInputElement>('input[name="pastExp"]:checked');
+      if (pastExp) surveyState.pastExperience = pastExp.value;
+
+      // Screen 5: Chips
+      const screen5Chips = Array.from(dialog?.querySelectorAll<HTMLElement>('[data-screen="5"] .chip.active') || []).map(c => c.textContent?.trim() || '');
+      if (screen5Chips.length) surveyState.biggestChallenges = screen5Chips;
+
+      // Screen 6: Depth
+      const selectedDepth = dialog?.querySelector<HTMLElement>('.depth-tile.selected');
+      if (selectedDepth) surveyState.skinToneDepth = selectedDepth.dataset.tone || '';
+
+      // Screen 7: Undertone
+      const undertone = dialog?.querySelector<HTMLInputElement>('input[name="undertone"]:checked');
+      if (undertone) surveyState.undertone = undertone.value;
+
+      // Screen 8: Seasonal Shift
+      const seasonal = dialog?.querySelector<HTMLInputElement>('input[name="seasonalShift"]:checked');
+      if (seasonal) surveyState.seasonalShift = seasonal.value;
+
+      // Screen 9: Testing Interest
+      const testingInt = dialog?.querySelector<HTMLInputElement>('input[name="testingInterest"]:checked');
+      if (testingInt) surveyState.testingInterest = testingInt.value;
+
+      surveyState.stageCompleted = stageCompleted;
+
+      if (stageCompleted === 'Full Profile') {
+        // Screen 11: Current brand
+        surveyState.currentBrandAndShade = (document.getElementById('currentBrand') as HTMLInputElement)?.value || '';
+
+        // Screen 12: Neck comparison
+        const neck = dialog?.querySelector<HTMLInputElement>('input[name="neckComp"]:checked');
+        if (neck) surveyState.neckVsFace = neck.value;
+
+        // Screen 13: Simplified match needs chips
+        const screen13Chips = Array.from(dialog?.querySelectorAll<HTMLElement>('[data-screen="13"] .chip.active') || []).map(c => c.textContent?.trim() || '');
+        if (screen13Chips.length) surveyState.simplifiedMatchNeeds = screen13Chips;
+
+        // Screen 14: Skin status now
+        const skinNow = dialog?.querySelector<HTMLInputElement>('input[name="skinNow"]:checked');
+        if (skinNow) surveyState.skinStatusNow = skinNow.value;
+
+        // Screen 15: Selection confidence
+        const conf = dialog?.querySelector<HTMLInputElement>('input[name="confidence"]:checked');
+        if (conf) surveyState.selectionConfidence = conf.value;
+
+        // Screen 16: City
+        surveyState.city = (document.getElementById('cityName') as HTMLInputElement)?.value || '';
+
+        // Screen 17: Sample consent
+        const consent = dialog?.querySelector<HTMLInputElement>('input[name="sampleConsent"]:checked');
+        if (consent) surveyState.sampleTestingConsent = consent.value;
+      }
+
+      return surveyState;
+    }
+
+    async function submitSurveyData(stage: 'Full Profile' | 'Initial Experience') {
+      const payload = collectCurrentState(stage);
+      
+      // Update Screen 18 badge
+      const badge = document.getElementById('participantIdBadge');
+      if (badge) badge.textContent = `PARTICIPANT ID · ${payload.participantId}`;
+
+      // Save locally as reliable backup
+      try {
+        const stored = JSON.parse(localStorage.getItem('samya_survey_submissions') || '[]');
+        stored.push(payload);
+        localStorage.setItem('samya_survey_submissions', JSON.stringify(stored));
+      } catch (e) {
+        // quota exceeded or private mode
+      }
+
+      // Submit to Google Sheets Webhook
+      const webhookUrl = (window as any).SAMYA_WEBHOOK_URL || (import.meta.env.PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL as string) || '';
+      if (webhookUrl) {
+        try {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          console.error('Webhook dispatch error:', err);
+        }
+      }
+    }
+
     // Modal Trigger Buttons
     document.querySelectorAll('[data-open-modal]').forEach(trigger => {
       trigger.addEventListener('click', () => {
@@ -1448,7 +1555,10 @@ const indianStates = [
 
     closeBtn?.addEventListener('click', () => dialog.close());
     doneBtn?.addEventListener('click', () => dialog.close());
-    finishNowBtn?.addEventListener('click', () => dialog.close());
+    finishNowBtn?.addEventListener('click', async () => {
+      await submitSurveyData('Initial Experience');
+      dialog.close();
+    });
 
     // Backdrop click close
     dialog.addEventListener('click', (e) => {
@@ -1483,7 +1593,17 @@ const indianStates = [
     });
 
     // Finish survey trigger
-    document.getElementById('finishSurveyBtn')?.addEventListener('click', () => goToScreen(18));
+    const finishSurveyBtn = document.getElementById('finishSurveyBtn');
+    finishSurveyBtn?.addEventListener('click', async () => {
+      const origText = finishSurveyBtn.textContent;
+      finishSurveyBtn.textContent = 'Submitting...';
+      try {
+        await submitSurveyData('Full Profile');
+      } finally {
+        finishSurveyBtn.textContent = origText;
+        goToScreen(18);
+      }
+    });
 
     // Screen 5 & 13 Chip Toggle
     dialog.querySelectorAll<HTMLElement>('.chip').forEach(chip => {
