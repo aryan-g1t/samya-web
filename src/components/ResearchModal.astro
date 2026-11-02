@@ -1524,7 +1524,18 @@ const indianStates = [
         // quota exceeded or private mode
       }
 
-      // Submit to Google Sheets Webhook
+      // 1. Submit directly to native Sāmya cloud database (/api/submit)
+      try {
+        await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.warn('Native API submit notice:', err);
+      }
+
+      // 2. Submit to external Google Sheets Webhook if configured
       const webhookUrl = (window as any).SAMYA_WEBHOOK_URL || (import.meta.env.PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL as string) || '';
       if (webhookUrl) {
         try {

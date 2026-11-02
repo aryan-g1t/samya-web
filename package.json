@@ -13,6 +13,7 @@
     "test:visual": "node scripts/capture_screenshots.js"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
     "astro": "^5.4.1"
   },
   "devDependencies": {
