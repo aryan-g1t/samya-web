@@ -25,6 +25,7 @@ const server = http.createServer((req, res) => {
     '.js': 'text/javascript',
     '.jpg': 'image/jpeg',
     '.png': 'image/png',
+    '.webp': 'image/webp',
     '.svg': 'image/svg+xml'
   };
   

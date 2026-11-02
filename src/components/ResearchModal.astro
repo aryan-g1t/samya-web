@@ -1,427 +1,1506 @@
 ---
+// ResearchModal.astro - Master 18-screen interactive research survey experience
+const depthTones = [
+  { name: 'Very Light', color: '#F4E7DA', text: 'Fair' },
+  { name: 'Light', color: '#ECCDB8', text: 'Light' },
+  { name: 'Light-Medium', color: '#DCB496', text: 'Light-Med' },
+  { name: 'Medium-Deep', color: '#B88158', text: 'Med-Deep' },
+  { name: 'Deep', color: '#7B4728', text: 'Deep' },
+  { name: 'Very Deep', color: '#452517', text: 'Very Deep' },
+  { name: 'Not sure', color: '#E8DED6', text: '?', isUnknown: true }
+];
+
+const indianStates = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 
+  'Chhattisgarh', 'Delhi NCR', 'Goa', 'Gujarat', 'Haryana', 
+  'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 
+  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 
+  'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 
+  'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
+  'Uttarakhand', 'West Bengal'
+];
 ---
 
-<dialog id="research-modal" aria-labelledby="modal-title">
-  <div class="modal-accent" aria-hidden="true"></div>
-  <div class="modal-inner">
-    <div class="modal-top">
-      <p class="eyebrow" id="modal-step">01 / Get started</p>
-      <button type="button" class="close" id="close-modal" aria-label="Close preview">×</button>
-    </div>
-
-    <!-- Stage 1 -->
-    <div id="stage-one" class="modal-stage active">
-      <h2 id="modal-title">Join our founding research.</h2>
-      <p>Tell us a little about yourself to start the shade experience survey.</p>
-      <div class="preview-notice">
-        <strong>Interactive design preview.</strong> This form is not connected to a survey or database. Nothing you enter is submitted or saved.
+<dialog id="research-modal" class="research-dialog" aria-modal="true" aria-labelledby="modal-step-title">
+  <div class="dialog-wrapper">
+    <!-- Top Modal Header -->
+    <header class="modal-nav">
+      <div class="modal-nav-left">
+        <img src="/images/logo-dark.png" alt="Sāmya:" class="modal-logo" id="modalLogo" width="115" height="30" />
       </div>
-      <form id="registration-form">
-        <div class="form-field">
-          <label for="first-name">First name</label>
-          <input 
-            id="first-name" 
-            type="text" 
-            name="firstName" 
-            placeholder="Your first name" 
-            autocomplete="given-name" 
-            required 
-            maxlength="80" 
-          />
-        </div>
-        <div class="form-field">
-          <label for="email-address">Email address</label>
-          <input 
-            id="email-address" 
-            type="email" 
-            name="email" 
-            placeholder="you@example.com" 
-            autocomplete="email" 
-            required 
-            maxlength="255" 
-          />
-        </div>
-        <button type="submit" class="btn modal-next">
-          Continue to survey <span class="arrow" aria-hidden="true">→</span>
-        </button>
-      </form>
+      <div class="modal-nav-right">
+        <span class="modal-phase-badge" id="modalPhaseBadge">THE JOURNEY</span>
+        <button type="button" class="close-btn" id="closeModalBtn" aria-label="Close survey">✕</button>
+      </div>
+    </header>
+
+    <!-- Top Linear Progress Line (visible on active question screens) -->
+    <div class="progress-track" id="progressTrack" aria-hidden="true" hidden>
+      <div class="progress-fill" id="progressFill" style="width: 14%;"></div>
     </div>
 
-    <!-- Stage 2 -->
-    <div id="stage-two" class="modal-stage" hidden>
-      <h2>Tell us about your shade experience.</h2>
-      <p>Which part of finding foundation has been most difficult for you?</p>
-      <div class="preview-notice">Preview only — your answers are not recorded.</div>
-      <form id="shade-form">
-        <span class="question-label">Choose the closest answer</span>
-        <div class="choices">
-          <label class="choice">
-            <input type="radio" name="difficulty" value="Finding my undertone" required />
-            <span>Finding my undertone</span>
-          </label>
-          <label class="choice">
-            <input type="radio" name="difficulty" value="Finding shades to try" />
-            <span>Finding enough shades to try</span>
-          </label>
-          <label class="choice">
-            <input type="radio" name="difficulty" value="How foundation wears" />
-            <span>How foundation looks after wearing it</span>
-          </label>
-          <label class="choice">
-            <input type="radio" name="difficulty" value="Something else" />
-            <span>Something else</span>
-          </label>
-        </div>
-        <div class="form-field">
-          <label for="notes">
-            Anything else? <span style="font-weight:400;color:#887580">(optional)</span>
-          </label>
-          <textarea 
-            id="notes" 
-            name="notes" 
-            placeholder="What would you like brands to understand?" 
-            maxlength="1000"
-          ></textarea>
-        </div>
-        <button type="submit" class="btn modal-next">
-          Finish preview <span class="arrow" aria-hidden="true">→</span>
-        </button>
-      </form>
-      <button class="back" id="go-back" type="button">← Back to details</button>
-    </div>
+    <!-- Scrollable Modal Content Container -->
+    <div class="dialog-body" id="dialogBody">
 
-    <!-- Stage 3 -->
-    <div id="stage-three" class="modal-stage" hidden>
-      <h2>Thank you for exploring Sāmya:.</h2>
-      <p>This demonstrates the intended survey flow. No data has been collected. Connect your real survey or signup service before the page goes live.</p>
-      <button type="button" class="btn modal-next" id="done-button">
-        Close preview <span class="arrow" aria-hidden="true">↗</span>
-      </button>
+      <!-- ========================================== -->
+      <!-- SCREEN 1: THE JOURNEY OVERVIEW             -->
+      <!-- ========================================== -->
+      <section class="survey-screen active" data-screen="1">
+        <div class="journey-header">
+          <p class="journey-eyebrow">THE JOURNEY</p>
+          <h2 id="modal-step-title">Two short steps. One honest record of what India actually wears.</h2>
+        </div>
+
+        <div class="journey-cards-grid">
+          <div class="journey-step-card">
+            <span class="step-num teal">01</span>
+            <h4>Tell us about your skin</h4>
+            <p>Seven questions about your last foundation search, your shade depth, your undertone. No wrong answers.</p>
+          </div>
+          <div class="journey-step-card">
+            <span class="step-num magenta">02</span>
+            <h4>Shape the first shade range</h4>
+            <p>Your responses feed directly into our research and the shades we formulate first for Indian skin tones.</p>
+          </div>
+          <div class="journey-step-card">
+            <span class="step-num purple">03</span>
+            <h4>Join shade testing</h4>
+            <p>Interested? Complete a short shade profile and be considered for a complimentary shade-testing kit.</p>
+          </div>
+        </div>
+
+        <div class="journey-matrix-card">
+          <div class="matrix-img-wrap">
+            <img src="/images/swatches-24.webp" alt="24 foundation liquid shade swatches" class="matrix-swatches" width="480" height="280" />
+            <span class="matrix-badge">First shade-testing kits<br /><strong>In development now</strong></span>
+          </div>
+          <div class="matrix-info">
+            <p class="info-eyebrow">WHY WE ASK</p>
+            <h3>Your answers decide what we make first.</h3>
+            <p>Every response helps us understand which depths, undertones and regions are most underserved today — and which shades belong in our first physical shade-testing kits. Selected participants may be invited to receive a complimentary kit and share their feedback.</p>
+          </div>
+        </div>
+
+        <div class="journey-plum-cta">
+          <h3>Your skin. Your shade. Your experience.</h3>
+          <p>Tell us about your experience. Your responses will help shape our research and first shade-testing kits.</p>
+          <button type="button" class="btn btn-white-pill" id="startSurveyBtn">
+            BEGIN THE SURVEY →
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 2: REGISTRATION (STEP 0 - ABOUT YOU)-->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="2" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">STEP 0 — ABOUT YOU</p>
+          <h2>Help us understand your experience.</h2>
+          <p class="screen-sub">We're building a better approach to complexion products, starting with India's diverse skin tones. Help shape what comes next.</p>
+
+          <form id="regForm" class="reg-form">
+            <div class="input-group">
+              <label for="fullName">FULL NAME</label>
+              <input type="text" id="fullName" name="fullName" placeholder="Your name" required />
+            </div>
+
+            <div class="input-group">
+              <label for="userEmail">EMAIL</label>
+              <input type="email" id="userEmail" name="email" placeholder="Your email" required />
+            </div>
+
+            <div class="input-group">
+              <label for="userPhone">PHONE NUMBER</label>
+              <input type="tel" id="userPhone" name="phone" placeholder="+91" />
+            </div>
+
+            <label class="checkbox-label">
+              <input type="checkbox" id="emailOptIn" name="optIn" checked />
+              <span>I'd like to receive occasional updates from Sāmya: about launches and research findings. (Optional)</span>
+            </label>
+
+            <p class="form-disclaimer">We'll use your details to manage your research participation and contact you about shade-testing opportunities if you're interested. Submitting the research survey does not subscribe you to promotional communications.</p>
+
+            <button type="submit" class="btn btn-wine btn-full">
+              GET STARTED →
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 3: LOCATION (WHERE ARE YOU BASED?)  -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="3" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 01</p>
+          <h2>Where are you based?</h2>
+          <p class="screen-sub">Climate, humidity, and sun exposure across India uniquely impact foundation wear.</p>
+
+          <div class="input-group select-wrap">
+            <label for="stateSelect">STATE / UNION TERRITORY</label>
+            <select id="stateSelect" name="state" required>
+              <option value="" disabled selected>Select your state or territory</option>
+              {indianStates.map(st => (
+                <option value={st}>{st}</option>
+              ))}
+            </select>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="2">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="4">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 4: PAST EXPERIENCE                  -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="4" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 02</p>
+          <h2>Think about the last time you looked for foundation. What happened?</h2>
+          <p class="screen-sub">Select one.</p>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="pastExp" value="matched_well" checked />
+              <span class="radio-title">I found a shade that matched well.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="pastExp" value="closest_available" />
+              <span class="radio-title">I bought the closest available shade, but it wasn't quite right.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="pastExp" value="couldnt_find" />
+              <span class="radio-title">I couldn't find a suitable shade.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="pastExp" value="found_not_bought" />
+              <span class="radio-title">I found a suitable shade but didn't buy it.</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="pastExp" value="never_tried" />
+              <span class="radio-title">I've never tried to find a foundation.</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="3">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="5">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 5: BIGGEST CHALLENGE (CHIPS)        -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="5" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 03</p>
+          <h2>What has been your biggest challenge with foundation?</h2>
+          <p class="screen-sub">Select up to two.</p>
+
+          <div class="chip-grid">
+            <button type="button" class="chip" data-val="undertone">Difficult to identify my undertone</button>
+            <button type="button" class="chip active" data-val="oxidation">The shade looks different after wearing it.</button>
+            <button type="button" class="chip" data-val="availability">My shade isn't consistently available</button>
+            <button type="button" class="chip" data-val="testing">No opportunity to test properly</button>
+            <button type="button" class="chip" data-val="seasonal">My skin tone changes through the year</button>
+            <button type="button" class="chip" data-val="no_issues">I haven't faced any major difficulties</button>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="4">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="6">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 6: VISUAL SKIN TONE DEPTH SELECTOR  -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="6" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 04</p>
+          <h2>Which skin-tone depth is closest to yours today?</h2>
+          <p class="screen-sub">Choose the closest option.</p>
+
+          <div class="depth-picker-grid">
+            {depthTones.map((tone, idx) => (
+              <button
+                type="button"
+                class={`depth-tile ${idx === 2 ? 'selected' : ''}`}
+                data-tone={tone.name}
+              >
+                <span class="depth-swatch" style={`background-color: ${tone.color};`}>
+                  {tone.isUnknown && <span class="unknown-q">?</span>}
+                </span>
+                <span class="depth-name">{tone.name}</span>
+              </button>
+            ))}
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="5">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="7">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 7: UNDERTONE SELECTION              -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="7" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 05</p>
+          <h2>How would you describe your undertone?</h2>
+          <p class="screen-sub">Select the undertone that best describes your complexion.</p>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="undertone" value="warm" checked />
+              <span class="radio-title">Warm (Golden, yellow, peachy undertones)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="undertone" value="cool" />
+              <span class="radio-title">Cool (Rosy, pink, or reddish undertones)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="undertone" value="neutral" />
+              <span class="radio-title">Neutral (A balance of warm and cool)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="undertone" value="olive" />
+              <span class="radio-title">Olive (Subtle green or greenish-gold undertones)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="undertone" value="unsure" />
+              <span class="radio-title">I'm not sure</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="6">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="8">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 8: SEASONAL VARIATION               -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="8" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 06</p>
+          <h2>Does your foundation shade change throughout the year?</h2>
+          <p class="screen-sub">Sun exposure across Indian seasons often shifts complexion depth.</p>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="seasonalShift" value="yes_significantly" checked />
+              <span class="radio-title">Yes, noticeably across seasons</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="seasonalShift" value="subtle" />
+              <span class="radio-title">A subtle shift between summer and winter</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="seasonalShift" value="no" />
+              <span class="radio-title">No, it stays fairly consistent</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="seasonalShift" value="not_sure" />
+              <span class="radio-title">I'm not sure</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="7">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="9">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 9: TESTING PARTICIPATION INTEREST   -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="9" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">QUESTION 07</p>
+          <h2>Would you be interested in testing Sāmya's developing shade range?</h2>
+          <p class="screen-sub">Selected participants receive complimentary shade testing kits.</p>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="testingInterest" value="yes_love_to" checked />
+              <span class="radio-title">Yes, I'd love to test samples on my skin</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="testingInterest" value="maybe" />
+              <span class="radio-title">Maybe, depending on timing and details</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="testingInterest" value="just_feedback" />
+              <span class="radio-title">No, just sharing research feedback</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="8">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="10">Submit Experience →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 10: MILESTONE SCREEN (WINE CANVAS)  -->
+      <!-- ========================================== -->
+      <section class="survey-screen wine-screen" data-screen="10" hidden>
+        <div class="milestone-content">
+          <span class="saved-pill">✓ YOUR RESPONSES ARE SAVED</span>
+          <h2>Thank you for sharing<br /><em>your experience.</em></h2>
+          <p class="milestone-sub">Your responses will help shape Sāmya's first complexion range. We'd love to learn a little more about your skin.</p>
+
+          <div class="milestone-card">
+            <p class="card-eyebrow">SHADE-TESTING KITS</p>
+            <h3>Interested in receiving a complimentary shade-testing kit?</h3>
+            <p>We're preparing physical shade-testing kits to help people discover their closest matches and contribute to our research. Answer a few additional questions to help us understand which shades may be most relevant for you. Selected participants will be invited to receive a complimentary kit and share their testing experience.</p>
+            <span class="badge-time">JUST 2 MORE MINUTES</span>
+          </div>
+
+          <div class="milestone-actions">
+            <button type="button" class="btn btn-yellow-pill" data-next="11">
+              CONTINUE TO SHADE PROFILE →
+            </button>
+            <button type="button" class="btn btn-outline-white" id="finishNowBtn">
+              FINISH FOR NOW
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 11: CURRENT SHADE & BRAND           -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="11" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 01/07</p>
+          <h2>Do you currently use a foundation? If yes, which one?</h2>
+          <p class="screen-sub">Mention the brand and shade if you remember.</p>
+
+          <div class="input-group">
+            <label for="currentBrand">BRAND & SHADE NAME</label>
+            <input type="text" id="currentBrand" placeholder="e.g. Maybelline Fit Me 228, MAC NC40" />
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="10">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="12">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 12: DAYLIGHT NECK VS FACE           -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="12" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 02/07</p>
+          <h2>In natural daylight, how does your face compare to your neck?</h2>
+          <p class="screen-sub">Select one.</p>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="neckComp" value="darker" checked />
+              <span class="radio-title">My face is slightly darker than my neck</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="neckComp" value="lighter" />
+              <span class="radio-title">My face is slightly lighter than my neck</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="neckComp" value="same" />
+              <span class="radio-title">They match fairly closely</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="11">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="13">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 13: SIMPLIFIED MATCH PREFERENCE     -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="13" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 03/07</p>
+          <h2>When choosing foundation, what would simplified shade match mean to you?</h2>
+          <p class="screen-sub">Select what matters most.</p>
+
+          <div class="chip-grid">
+            <button type="button" class="chip active">Testing at home in natural light</button>
+            <button type="button" class="chip">Knowing my undertone without guesswork</button>
+            <button type="button" class="chip">A formula that doesn't oxidize darker</button>
+            <button type="button" class="chip">Shades formulated specifically for Indian skin</button>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="12">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="14">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 14: CURRENT SKIN STATUS             -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="14" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 04/07</p>
+          <h2>Compared with your usual skin tone, how does your skin look right now?</h2>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="skinNow" value="normal" checked />
+              <span class="radio-title">About average / my standard depth</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="skinNow" value="tanned" />
+              <span class="radio-title">More tanned than usual</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="skinNow" value="lighter" />
+              <span class="radio-title">Lighter than usual</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="13">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="15">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 15: SELECTION CONFIDENCE            -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="15" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 05/07</p>
+          <h2>How confident are you about the skin depth and undertone you selected earlier?</h2>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="confidence" value="very" checked />
+              <span class="radio-title">Very confident</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="confidence" value="somewhat" />
+              <span class="radio-title">Somewhat confident — I would love to test</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="confidence" value="unsure" />
+              <span class="radio-title">Not confident — I usually guess</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="14">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="16">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 16: CITY / TOWN                     -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="16" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 06/07</p>
+          <h2>Which city or town are you currently based in?</h2>
+          <p class="screen-sub">This helps us plan sample distribution and regional testing cohorts.</p>
+
+          <div class="input-group">
+            <label for="cityName">CITY / TOWN</label>
+            <input type="text" id="cityName" placeholder="e.g. Mumbai, Bengaluru, Delhi" />
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="15">← Back</button>
+            <button type="button" class="btn btn-wine" data-next="17">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 17: FINAL CONSENT                   -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="17" hidden>
+        <div class="screen-content">
+          <p class="question-eyebrow">SHADE PROFILE | 07/07</p>
+          <h2>If selected, would you be comfortable trying a few foundation samples and sharing your feedback?</h2>
+
+          <div class="choice-group">
+            <label class="radio-card">
+              <input type="radio" name="sampleConsent" value="yes" checked />
+              <span class="radio-title">Yes, I am happy to test and share honest feedback</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="sampleConsent" value="no" />
+              <span class="radio-title">I'd prefer not to test at this stage</span>
+            </label>
+          </div>
+
+          <div class="survey-nav-row">
+            <button type="button" class="btn btn-outline-back" data-back="16">← Back</button>
+            <button type="button" class="btn btn-wine" id="finishSurveyBtn">Complete Profile →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SCREEN 18: COMPLETION STATE                -->
+      <!-- ========================================== -->
+      <section class="survey-screen" data-screen="18" hidden>
+        <div class="complete-content">
+          <div class="check-circle" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2>Thank you for helping shape<br /><span class="brand-wine">Sāmya:</span></h2>
+          <p class="complete-desc">Your shade profile is complete. If you're selected for a complimentary shade-testing kit, we'll be in touch at the email you provided. Selection is limited and completing the profile doesn't guarantee a kit.</p>
+          <span class="participant-id">PARTICIPANT ID · SAM-000004</span>
+          <button type="button" class="btn btn-outline-back btn-done" id="doneModalBtn">
+            DONE
+          </button>
+        </div>
+      </section>
+
     </div>
   </div>
 </dialog>
 
 <style>
-  dialog {
-    border: 0;
+  .research-dialog {
     padding: 0;
-    max-width: 540px;
-    width: calc(100% - 36px);
-    max-height: calc(100% - 36px);
-    background: var(--warm-white);
+    border: none;
+    background: transparent;
+    max-width: 960px;
+    width: min(94vw, 960px);
+    max-height: 90vh;
+    border-radius: 24px;
+    box-shadow: 0 32px 80px rgba(27, 5, 22, 0.45);
+    overflow: hidden;
+  }
+
+  .research-dialog::backdrop {
+    background: rgba(27, 5, 22, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .dialog-wrapper {
+    background: var(--porcelain);
     color: var(--plum);
-    box-shadow: 0 27px 90px rgba(20, 2, 16, .32);
-    overflow-y: auto;
-    position: fixed;
-    inset: 0;
-    margin: auto;
-    opacity: 0;
-    transform: scale(0.96) translateY(12px);
-    transition: opacity 0.3s var(--ease-out-expo), transform 0.3s var(--ease-spring), display 0.3s allow-discrete, overlay 0.3s allow-discrete;
-  }
-
-  dialog[open] {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-
-  @starting-style {
-    dialog[open] {
-      opacity: 0;
-      transform: scale(0.96) translateY(12px);
-    }
-  }
-
-  dialog::backdrop {
-    background: rgba(22, 3, 18, .73);
-    backdrop-filter: blur(4px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  dialog[open]::backdrop {
-    opacity: 1;
-  }
-
-  @starting-style {
-    dialog[open]::backdrop {
-      opacity: 0;
-    }
-  }
-
-  .modal-accent {
-    height: 5px;
-    background: linear-gradient(90deg, var(--plum), var(--purple), var(--wine), var(--fuchsia), var(--yellow), var(--turquoise));
-  }
-
-  .modal-inner {
-    padding: 34px 40px 43px;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
     position: relative;
   }
 
-  .modal-top {
+  .dialog-wrapper.is-wine {
+    background: var(--wine);
+    color: #FFFFFF;
+  }
+
+  /* Top Navigation */
+  .modal-nav {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--line);
+    background: inherit;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
-  .modal-top .eyebrow {
-    font-size: 9px;
-    margin: 0;
+  .modal-logo {
+    height: 28px;
+    width: auto;
+    display: block;
+    object-fit: contain;
   }
 
-  .close {
-    font-size: 28px;
-    line-height: 1;
-    width: 34px;
-    height: 34px;
-    border: 0;
-    background: transparent;
-    color: var(--plum);
+  .modal-nav-right {
     display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .modal-phase-badge {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--wine);
+    text-transform: uppercase;
+  }
+
+  .dialog-wrapper.is-wine .modal-phase-badge {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .close-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease, color 0.2s ease;
+    color: var(--plum);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
   }
 
-  .close:hover {
-    transform: scale(1.15) rotate(90deg);
-    color: var(--wine);
+  .close-btn:hover {
+    background: rgba(27, 5, 22, 0.08);
+    transform: scale(1.08);
   }
 
-  .modal-stage {
-    animation: stageFadeIn 0.35s var(--ease-out-expo) forwards;
+  .dialog-wrapper.is-wine .close-btn {
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
-  @keyframes stageFadeIn {
-    from {
+  /* Top Progress Bar */
+  .progress-track {
+    height: 3px;
+    background: rgba(27, 5, 22, 0.08);
+    position: relative;
+    width: 100%;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--purple);
+    transition: width 0.4s var(--ease-out-expo);
+  }
+
+  /* Scrollable Body */
+  .dialog-body {
+    overflow-y: auto;
+    padding: 40px 48px;
+    scroll-behavior: smooth;
+  }
+
+  .survey-screen {
+    animation: screenFadeIn 0.35s var(--ease-out-expo) forwards;
+  }
+
+  @keyframes screenFadeIn {
+    0% {
       opacity: 0;
-      transform: translateX(14px);
+      transform: translateX(20px);
     }
-    to {
+    100% {
       opacity: 1;
       transform: translateX(0);
     }
   }
 
-  .modal-inner h2 {
-    font-family: var(--serif);
-    font-size: 53px;
-    font-weight: 500;
-    letter-spacing: -.04em;
-    line-height: 1;
-    margin: 27px 0 14px;
+  /* Screen 1: Journey styles */
+  .journey-header {
+    margin-bottom: 36px;
   }
 
-  .modal-inner p {
-    font-size: 13px;
-    line-height: 1.8;
-    color: var(--muted);
-    margin: 0 0 17px;
-  }
-
-  .preview-notice {
-    padding: 13px 15px;
-    background: #F0E7EC;
-    border-left: 3px solid var(--purple);
-    font-size: 11px;
-    line-height: 1.7;
-    color: #5A4053;
-    margin: 20px 0 23px;
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    margin: 18px 0;
-  }
-
-  .form-field label,
-  .question-label {
+  .journey-eyebrow {
+    font-family: var(--sans);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: .045em;
+    letter-spacing: 0.14em;
+    color: var(--wine);
+    margin: 0 0 12px;
+  }
+
+  .journey-header h2 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 3.8vw, 44px);
+    font-weight: 500;
+    line-height: 1.1;
+    margin: 0;
     color: var(--plum);
   }
 
-  .form-field input,
-  .form-field textarea {
-    border: 1px solid #D3C3CD;
-    background: #FFFEFC;
-    border-radius: 0;
+  .journey-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .journey-step-card {
+    background: var(--warm-white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 20px;
+  }
+
+  .step-num {
+    display: block;
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .step-num.teal { color: var(--turquoise); }
+  .step-num.magenta { color: var(--fuchsia); }
+  .step-num.purple { color: var(--purple); }
+
+  .journey-step-card h4 {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
     color: var(--plum);
-    padding: 13px 14px;
-    min-height: 49px;
+    margin: 0 0 8px;
+  }
+
+  .journey-step-card p {
+    font-family: var(--sans);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ink-body);
+    margin: 0;
+  }
+
+  .journey-matrix-card {
+    background: var(--warm-white);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 36px;
+  }
+
+  .matrix-img-wrap {
+    position: relative;
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(27, 5, 22, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .matrix-swatches {
     width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  .matrix-badge {
+    position: absolute;
+    bottom: -14px;
+    left: 20px;
+    background: var(--wine);
+    color: #FFFFFF;
+    font-family: var(--sans);
+    font-size: 10px;
+    line-height: 1.35;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(118, 2, 46, 0.3);
+  }
+
+  .info-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--wine);
+    margin: 0 0 10px;
+  }
+
+  .matrix-info h3 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--plum);
+    margin: 0 0 14px;
+  }
+
+  .matrix-info p {
+    font-family: var(--sans);
     font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-body);
+    margin: 0;
+  }
+
+  .journey-plum-cta {
+    background: var(--plum);
+    color: #FFFFFF;
+    border-radius: 20px;
+    padding: 36px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .journey-plum-cta h3 {
+    font-family: var(--serif);
+    font-size: 32px;
+    margin: 0;
+  }
+
+  .journey-plum-cta p {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: #C9BFBE;
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* General Question Screens */
+  .screen-content {
+    max-width: 580px;
+    margin-inline: auto;
+  }
+
+  .question-eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--wine);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+  }
+
+  .screen-content h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.4vw, 38px);
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--plum);
+    margin: 0 0 12px;
+  }
+
+  .screen-sub {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 32px;
+  }
+
+  /* Form Elements */
+  .reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-group label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--plum);
+  }
+
+  .input-group input,
+  .input-group select {
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #FFFFFF;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--plum);
+    outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .form-field input:focus,
-  .form-field textarea:focus {
-    border-color: var(--purple);
-    box-shadow: 0 0 0 3px rgba(113, 20, 172, 0.12);
-    outline: none;
+  .input-group input:focus,
+  .input-group select:focus {
+    border-color: var(--fuchsia);
+    box-shadow: 0 0 0 3px rgba(228, 4, 133, 0.2);
   }
 
-  .form-field textarea {
-    min-height: 92px;
-    resize: vertical;
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-body);
+    cursor: pointer;
   }
 
-  .choices {
-    display: grid;
-    gap: 9px;
-    margin: 18px 0 23px;
+  .checkbox-label input {
+    margin-top: 2px;
+    accent-color: var(--wine);
   }
 
-  .choice {
+  .form-disclaimer {
+    font-family: var(--sans);
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* Radio Cards */
+  .choice-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .radio-card {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 13px;
-    border: 1px solid #DCCDD5;
-    background: white;
-    font-size: 12px;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--warm-white);
     cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
   }
 
-  .choice:hover {
+  .radio-card:hover {
+    border-color: var(--fuchsia);
+    background: #FFFFFF;
+    transform: translateY(-1px);
+  }
+
+  .radio-card input {
+    accent-color: var(--fuchsia);
+    width: 18px;
+    height: 18px;
+    margin: 0;
+  }
+
+  .radio-title {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--plum);
+    font-weight: 500;
+  }
+
+  /* Pill Chips */
+  .chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .chip {
+    padding: 12px 20px;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    background: var(--warm-white);
+    color: var(--plum);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .chip:hover {
     border-color: var(--wine);
-    transform: translateX(2px);
+    background: #FFFFFF;
   }
 
-  .choice:has(input:checked) {
-    border-color: var(--purple);
-    background: #F2EBF7;
+  .chip.active {
+    background: var(--wine);
+    color: #FFFFFF;
+    border-color: var(--wine);
+    box-shadow: 0 4px 12px rgba(118, 2, 46, 0.25);
   }
 
-  .choice input {
-    accent-color: var(--purple);
+  /* Screen 6: Visual Depth Picker */
+  .depth-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
   }
 
-  .modal-next {
-    margin-top: 9px;
+  .depth-tile {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.25s var(--ease-spring), border-color 0.2s ease, box-shadow 0.25s ease;
+  }
+
+  .depth-tile:hover {
+    transform: scale(1.04);
+    border-color: var(--fuchsia);
+    box-shadow: 0 8px 24px rgba(27, 5, 22, 0.08);
+  }
+
+  .depth-tile.selected {
+    border: 2px solid var(--fuchsia);
+    box-shadow: 0 0 0 4px rgba(228, 4, 133, 0.15);
+  }
+
+  .depth-swatch {
     width: 100%;
+    height: 72px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .back {
+  .unknown-q {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--plum);
+  }
+
+  .depth-name {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--plum);
+  }
+
+  /* Screen 10: Milestone Screen */
+  .milestone-content {
+    max-width: 600px;
+    margin-inline: auto;
+    text-align: center;
+    color: #FFFFFF;
+  }
+
+  .saved-pill {
     display: inline-block;
-    color: var(--wine);
+    padding: 6px 16px;
+    border-radius: 9999px;
+    background: rgba(245, 201, 40, 0.18);
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    font-family: var(--sans);
     font-size: 11px;
     font-weight: 700;
-    border: 0;
-    background: none;
-    text-decoration: underline;
-    margin-top: 18px;
-    padding: 5px 0;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .milestone-content h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 50px);
+    font-weight: 500;
+    line-height: 1.1;
+    margin: 0 0 16px;
+  }
+
+  .milestone-content h2 em {
+    font-style: italic;
+    color: var(--yellow);
+  }
+
+  .milestone-sub {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 36px;
+  }
+
+  .milestone-card {
+    background: var(--plum);
+    border-radius: 20px;
+    padding: 32px 28px;
+    text-align: left;
+    margin-bottom: 36px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-eyebrow {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--yellow);
+    margin: 0 0 12px;
+  }
+
+  .milestone-card h3 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    color: #FFFFFF;
+    margin: 0 0 12px;
+  }
+
+  .milestone-card p {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.65;
+    color: #DCD0D3;
+    margin: 0 0 20px;
+  }
+
+  .badge-time {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .milestone-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  /* Screen 18: Complete State */
+  .complete-content {
+    max-width: 540px;
+    margin-inline: auto;
+    text-align: center;
+    padding: 20px 0 10px;
+  }
+
+  .check-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #E8BFD0;
+    color: var(--wine);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .complete-content h2 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--plum);
+    margin: 0 0 16px;
+  }
+
+  .brand-wine {
+    color: var(--wine);
+  }
+
+  .complete-desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-body);
+    margin: 0 0 24px;
+  }
+
+  .participant-id {
+    display: block;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* Buttons */
+  .survey-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 32px;
+    border-radius: 9999px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: transform 0.25s var(--ease-spring), background-color 0.2s ease, box-shadow 0.25s ease;
+    will-change: transform;
+    text-decoration: none;
   }
 
-  .back:hover {
-    color: var(--purple);
+  .btn-white-pill {
+    background: #FFFFFF;
+    color: var(--plum);
+    font-weight: 700;
   }
 
-  [hidden] {
-    display: none !important;
+  .btn-white-pill:hover {
+    background: var(--warm-white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   }
 
-  @media (max-width: 540px) {
-    .modal-inner {
-      padding: 25px 22px 31px;
+  .btn-wine {
+    background: var(--wine);
+    color: #FFFFFF;
+  }
+
+  .btn-wine:hover {
+    background: #5d0224;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 2, 46, 0.3);
+  }
+
+  .btn-outline-back {
+    background: transparent;
+    border: 1px solid var(--plum);
+    color: var(--plum);
+  }
+
+  .btn-outline-back:hover {
+    background: rgba(27, 5, 22, 0.05);
+    transform: translateY(-1px);
+  }
+
+  .btn-full {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .btn-yellow-pill {
+    background: var(--yellow);
+    color: var(--plum);
+    font-weight: 700;
+  }
+
+  .btn-yellow-pill:hover {
+    background: #e6bc20;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 201, 40, 0.4);
+  }
+
+  .btn-outline-white {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+  }
+
+  .btn-outline-white:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-done {
+    padding: 0 48px;
+  }
+
+  @media (max-width: 768px) {
+    .dialog-body {
+      padding: 24px 20px;
     }
-    .modal-inner h2 {
-      font-size: 43px;
+    .journey-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .journey-matrix-card {
+      grid-template-columns: 1fr;
+    }
+    .depth-picker-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .milestone-actions {
+      flex-direction: column;
+    }
+    .milestone-actions .btn {
+      width: 100%;
     }
   }
 </style>
 
 <script>
-  (function () {
-    const modal = document.getElementById('research-modal') as HTMLDialogElement | null;
-    if (!modal) return;
+  // Reactive Survey Navigation Controller
+  function initSurveyController() {
+    const dialog = document.getElementById('research-modal') as HTMLDialogElement | null;
+    if (!dialog) return;
 
-    const stages = [
-      document.getElementById('stage-one'),
-      document.getElementById('stage-two'),
-      document.getElementById('stage-three')
-    ];
-    const label = document.getElementById('modal-step');
-    const registration = document.getElementById('registration-form') as HTMLFormElement | null;
-    const survey = document.getElementById('shade-form') as HTMLFormElement | null;
-    const labels = ['01 / Get started', '02 / Shade survey', '03 / Preview complete'];
+    const wrapper = dialog.querySelector('.dialog-wrapper');
+    const dialogBody = document.getElementById('dialogBody');
+    const phaseBadge = document.getElementById('modalPhaseBadge');
+    const progressTrack = document.getElementById('progressTrack');
+    const progressFill = document.getElementById('progressFill');
+    const modalLogo = document.getElementById('modalLogo') as HTMLImageElement | null;
+    const screens = Array.from(dialog.querySelectorAll<HTMLElement>('.survey-screen'));
 
-    function switchStage(n: number) {
-      stages.forEach((el, i) => {
-        if (!el) return;
-        if (i === n) {
-          el.hidden = false;
-          el.classList.add('active');
+    let currentScreen = 1;
+
+    function goToScreen(target: number) {
+      if (target < 1 || target > 18) return;
+
+      screens.forEach(s => {
+        const sNum = parseInt(s.dataset.screen || '1', 10);
+        if (sNum === target) {
+          s.hidden = false;
+          s.classList.add('active');
         } else {
-          el.hidden = true;
-          el.classList.remove('active');
+          s.hidden = true;
+          s.classList.remove('active');
         }
       });
 
-      if (label && labels[n]) {
-        label.textContent = labels[n];
-      }
-      if (modal) {
-        modal.scrollTop = 0;
-      }
+      currentScreen = target;
+      if (dialog) dialog.dataset.activeScreen = currentScreen.toString();
+      if (dialogBody) dialogBody.scrollTop = 0;
 
-      const activeStage = stages[n];
-      if (activeStage) {
-        const title = activeStage.querySelector('h2');
-        if (title) {
-          title.setAttribute('tabindex', '-1');
-          title.focus({ preventScroll: true });
+      // Update Header & Styling Modes
+      if (target === 10) {
+        wrapper?.classList.add('is-wine');
+        if (modalLogo) modalLogo.src = '/images/logo-white.png';
+        if (phaseBadge) phaseBadge.textContent = 'INVITATION';
+        if (progressTrack) progressTrack.hidden = true;
+      } else {
+        wrapper?.classList.remove('is-wine');
+        if (modalLogo) modalLogo.src = '/images/logo-dark.png';
+
+        if (target === 1) {
+          if (phaseBadge) phaseBadge.textContent = 'THE JOURNEY';
+          if (progressTrack) progressTrack.hidden = true;
+        } else if (target === 2) {
+          if (phaseBadge) phaseBadge.textContent = 'REGISTRATION';
+          if (progressTrack) progressTrack.hidden = true;
+        } else if (target >= 3 && target <= 9) {
+          const stepIdx = target - 2;
+          if (phaseBadge) phaseBadge.textContent = `SURVEY | 0${stepIdx}/07`;
+          if (progressTrack) progressTrack.hidden = false;
+          if (progressFill) progressFill.style.width = `${(stepIdx / 7) * 100}%`;
+        } else if (target >= 11 && target <= 17) {
+          const profileIdx = target - 10;
+          if (phaseBadge) phaseBadge.textContent = `SHADE PROFILE | 0${profileIdx}/07`;
+          if (progressTrack) progressTrack.hidden = false;
+          if (progressFill) progressFill.style.width = `${(profileIdx / 7) * 100}%`;
+        } else if (target === 18) {
+          if (phaseBadge) phaseBadge.textContent = 'COMPLETE';
+          if (progressTrack) progressTrack.hidden = true;
         }
       }
     }
 
-    // Modal triggers
-    document.querySelectorAll('[data-open-modal]').forEach(button => {
-      button.addEventListener('click', () => {
-        switchStage(0);
-        modal.showModal();
+    // Modal Trigger Buttons
+    document.querySelectorAll('[data-open-modal]').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        goToScreen(1);
+        dialog.showModal();
       });
     });
 
-    document.getElementById('close-modal')?.addEventListener('click', () => modal.close());
-    document.getElementById('done-button')?.addEventListener('click', () => modal.close());
-    document.getElementById('go-back')?.addEventListener('click', () => switchStage(0));
+    // Close Button & Done
+    const closeBtn = document.getElementById('closeModalBtn');
+    const doneBtn = document.getElementById('doneModalBtn');
+    const finishNowBtn = document.getElementById('finishNowBtn');
 
-    // Form Submissions
-    registration?.addEventListener('submit', e => {
+    closeBtn?.addEventListener('click', () => dialog.close());
+    doneBtn?.addEventListener('click', () => dialog.close());
+    finishNowBtn?.addEventListener('click', () => dialog.close());
+
+    // Backdrop click close
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Screen 1: Start Survey
+    document.getElementById('startSurveyBtn')?.addEventListener('click', () => goToScreen(2));
+
+    // Screen 2: Registration form submit
+    const regForm = document.getElementById('regForm') as HTMLFormElement | null;
+    regForm?.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (registration.reportValidity()) {
-        switchStage(1);
+      if (regForm.reportValidity()) {
+        goToScreen(3);
       }
     });
 
-    survey?.addEventListener('submit', e => {
-      e.preventDefault();
-      if (survey.reportValidity()) {
-        switchStage(2);
-      }
+    // Next & Back data-attributes
+    dialog.querySelectorAll<HTMLElement>('[data-next]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const next = parseInt(btn.dataset.next || '1', 10);
+        goToScreen(next);
+      });
     });
 
-    // Close on backdrop click
-    modal.addEventListener('click', e => {
-      if (e.target === modal) {
-        modal.close();
-      }
+    dialog.querySelectorAll<HTMLElement>('[data-back]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const back = parseInt(btn.dataset.back || '1', 10);
+        goToScreen(back);
+      });
     });
 
-    modal.addEventListener('close', () => {
-      registration?.reset();
-      survey?.reset();
-      switchStage(0);
+    // Finish survey trigger
+    document.getElementById('finishSurveyBtn')?.addEventListener('click', () => goToScreen(18));
+
+    // Screen 5 & 13 Chip Toggle
+    dialog.querySelectorAll<HTMLElement>('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('active');
+      });
     });
-  })();
+
+    // Screen 6 Depth Tile Selection
+    dialog.querySelectorAll<HTMLElement>('.depth-tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        dialog.querySelectorAll('.depth-tile').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+      });
+    });
+  }
+
+  // Initialize on DOM load and view transitions
+  document.addEventListener('DOMContentLoaded', initSurveyController);
 </script>

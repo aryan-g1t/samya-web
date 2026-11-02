@@ -1,16 +1,25 @@
 ---
+// Header.astro - Master navigation with official Sāmya: lockup
 ---
 
 <header class="site-header">
   <div class="container header-inner">
     <a class="logo" href="#top" aria-label="Sāmya: home">
-      Sāmya<span class="logo-colon">:</span>
+      <img
+        src="/images/logo-dark.png"
+        alt="Sāmya:"
+        class="logo-img"
+        width="148"
+        height="38"
+        loading="eager"
+        decoding="async"
+      />
     </a>
     <nav class="site-nav" aria-label="Main navigation">
-      <a href="#the-problem" class="nav-link">The problem</a>
-      <a href="#our-method" class="nav-link">Our approach</a>
+      <a href="#the-problem" class="nav-link">THE PROBLEM</a>
+      <a href="#our-method" class="nav-link">OUR APPROACH</a>
       <button class="nav-join" type="button" data-open-modal aria-haspopup="dialog">
-        Join our research <span class="arrow" aria-hidden="true">↗</span>
+        JOIN OUR RESEARCH
       </button>
     </nav>
   </div>
@@ -33,41 +42,43 @@
   }
 
   .logo {
-    font-family: var(--serif);
-    font-size: clamp(35px, 3vw, 45px);
-    letter-spacing: -.082em;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
     line-height: 1;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease-spring);
   }
 
   .logo:hover {
-    opacity: 0.9;
+    opacity: 0.88;
+    transform: scale(1.02);
   }
 
-  .logo-colon {
-    letter-spacing: -.04em;
-    color: var(--wine);
+  .logo-img {
+    height: 38px;
+    width: auto;
+    display: block;
+    object-fit: contain;
   }
 
   .site-nav {
     display: flex;
     align-items: center;
-    gap: 41px;
+    gap: 36px;
   }
 
   .nav-link {
     text-decoration: none;
     text-transform: uppercase;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .16em;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--plum);
     white-space: nowrap;
-    transition: color .2s ease;
+    transition: color 0.2s ease;
     position: relative;
-    padding: 4px 0;
+    padding: 6px 0;
   }
 
   .nav-link::after {
@@ -92,16 +103,20 @@
   .nav-join {
     display: inline-flex;
     align-items: center;
-    gap: 20px;
-    padding: 14px 17px 14px 19px;
+    justify-content: center;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 9999px;
     border: 1px solid var(--plum);
     background: transparent;
     color: var(--plum);
-    font-size: 10px;
-    letter-spacing: .12em;
-    font-weight: 700;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    font-weight: 600;
     text-transform: uppercase;
-    transition: background .25s ease, color .25s ease, transform .25s var(--ease-out-expo), box-shadow .25s ease;
+    white-space: nowrap;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s var(--ease-out-expo), box-shadow 0.25s ease;
     will-change: transform;
   }
 
@@ -109,7 +124,7 @@
     background: var(--plum);
     color: var(--porcelain);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(27, 5, 22, 0.15);
+    box-shadow: 0 4px 16px rgba(27, 5, 22, 0.14);
   }
 
   .nav-join:active {
@@ -118,22 +133,21 @@
 
   @media (max-width: 800px) {
     .header-inner {
-      height: 75px;
+      height: 76px;
     }
-    .logo {
-      font-size: 37px;
+    .logo-img {
+      height: 32px;
     }
     .site-nav {
-      gap: 14px;
+      gap: 16px;
     }
     .nav-link {
       display: none;
     }
     .nav-join {
-      padding: 12px 13px;
-      font-size: 9px;
-      gap: 13px;
+      height: 38px;
+      padding: 0 16px;
+      font-size: 10px;
     }
   }
 </style>
-
