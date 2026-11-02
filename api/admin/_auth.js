@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'samya-complexion-discovery-ultra-secret-key-2026';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Samya@2026';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'vaanigupta';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'aryan2802';
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 
 // In-memory rate limiting map (IP -> { attempts, lockoutUntil })
@@ -105,3 +105,4 @@ export function getAuthenticatedUser(req) {
   const sessionToken = cookies['samya_admin_session'] || req.headers['x-admin-token'];
   return verifySessionToken(sessionToken);
 }
+

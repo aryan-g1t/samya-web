@@ -19,8 +19,8 @@ async function capture() {
 
   // 2. Perform Login via UI
   console.log('Entering credentials...');
-  await page.type('#username', 'admin');
-  await page.type('#password', 'Samya@2026');
+  await page.type('#username', 'vaanigupta');
+  await page.type('#password', 'aryan2802');
   await page.click('#btn-login');
 
   // Wait for dashboard to load
@@ -35,3 +35,4 @@ async function capture() {
 }
 
 capture().catch(console.error);
+
