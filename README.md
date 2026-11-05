@@ -70,8 +70,8 @@ This repository houses the high-fidelity web application built from an exact 1:1
   --turquoise: #00AEBD;   /* Spectrum stop */
 
   /* Typography */
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'scotch-display', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'dm-sans', 'DM Sans', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 ```
 

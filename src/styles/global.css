@@ -17,7 +17,7 @@
 
   /* Typography */
   --serif: 'scotch-display', 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Manrope', Arial, sans-serif;
+  --sans: 'dm-sans', 'DM Sans', 'Manrope', Arial, sans-serif;
 
   /* Motion Timing & Physics */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

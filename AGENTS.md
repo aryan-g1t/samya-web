@@ -42,7 +42,7 @@ This document establishes the architectural constraints, design system tokens, q
 
   /* Typography */
   --serif: 'scotch-display', 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Manrope', Arial, sans-serif;
+  --sans: 'dm-sans', 'DM Sans', 'Manrope', Arial, sans-serif;
 }
 ```
 
