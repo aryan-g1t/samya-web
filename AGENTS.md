@@ -41,7 +41,7 @@ This document establishes the architectural constraints, design system tokens, q
   --turquoise: #00AEBD;   /* Spectrum gradient stop */
 
   /* Typography */
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --serif: 'scotch-display', 'Cormorant Garamond', Georgia, serif;
   --sans: 'Manrope', Arial, sans-serif;
 }
 ```
